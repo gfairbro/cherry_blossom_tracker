@@ -2,12 +2,6 @@
 
 TBD
 
-## Installation
-
-```bash
-$ pip install group_25_py
-```
-
 ## Usage
 
 - TODO
@@ -19,7 +13,3 @@ Interested in contributing? Check out the contributing guidelines. Please note t
 ## License
 
 `group_25_py` was created by Katia Aristova, Gabriel Fairbrother, Chaoran Wang, TZ Yan. It is licensed under the terms of the GNU General Public License v3.0 license.
-
-## Credits
-
-`group_25_py` was created with [`cookiecutter`](https://cookiecutter.readthedocs.io/en/latest/) and the `py-pkgs-cookiecutter` [template](https://github.com/py-pkgs/py-pkgs-cookiecutter).
