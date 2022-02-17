@@ -1,4 +1,4 @@
-# group_25_py
+# cherry_blossom_tracker
 
 TBD
 
@@ -12,4 +12,4 @@ Interested in contributing? Check out the contributing guidelines. Please note t
 
 ## License
 
-`group_25_py` was created by Katia Aristova, Gabriel Fairbrother, Chaoran Wang, TZ Yan. It is licensed under the terms of the GNU General Public License v3.0 license.
+`cherry_blossom_tracker` was created by Katia Aristova, Gabriel Fairbrother, Chaoran Wang, TZ Yan. It is licensed under the terms of the GNU General Public License v3.0 license.
