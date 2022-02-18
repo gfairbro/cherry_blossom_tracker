@@ -4,6 +4,8 @@
 
 The *Cherry blossom tracker* app consists of maps and plots that help users locate cherry blossoms in Vancouver depending on the month, neighbourhood, tree size and cultivar. The maps display tree locations using geographic coordinates as well as tree density using a neighbourhood heat map. The plot contains a gantt chart with the blossoming timeline, cultivar bar chart, tree circumference distributions as well as a section with blossom photo examples.
 
+Proposal document can be found [here](https://github.com/UBC-MDS/cherry_blossom_tracker/blob/main/docs/proposal.md).
+
 **Dashboard filters**
 
 1. **Month dropdown.** *Cherry blossom tracker* allows users to filter by neighbourhood, tree cultivar and blossoming time. For example, if the user arrives in the spring, they can set the month to March or April to see which tree blossoms are currently in bloom. This change will appear on the map. When applied, this filter will display only those cultivars that are likely to blossom at this time.
