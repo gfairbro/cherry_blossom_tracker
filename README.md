@@ -1,4 +1,4 @@
-# cherry_blossom_tracker
+# 🌸 Vancouver Cherry blossom tracker
 
 ## Description
 
@@ -13,10 +13,6 @@ The *Cherry blossom tracker* app consists of maps and plots that help users loca
 3. **Cultivar dropdown.** Different tree cultivars produce different flowers and colours. Users are able to search for information regarding specific cultivars. Their location, count and blossom time will be updated according to the selected cultivar.
 
 4. **Tree circumference range filter.** Tree circumference is a proxy for the size of the tree and its canopy. Dashboard visitors may look specifically for larger and older trees. They can adjust the tree circumference using a slider.
-
-## Usage
-
-- TODO
 
 ## Contributing
 
