@@ -12,7 +12,13 @@
 
 ## Section 2. Data Description
 
-...
+We will be visualizing a dataset of approximately 150,000 public trees on boulevards in the City of Vancouver. Each tree has 19 variables that describe the public tree's ID (`TREE_ID`), its location data (`CIVIC_NUMBER`, `STD_STREET`, `ASSIGNED`, and `Geom`, etc.) which reveals different information, its biological characteristics (`GENUS_NAME`, `SPECIES_NAME`, `CULTIVAR_NAME`, `COMMON_NAME`), its physical characteristics (`HEIGHT_RANGE_ID`, `DIAMETER`), whether a root barrier is installed (`ROOT_BARRIER`),  and when it is planted (`DATE_PLANTED`).
+
+**Dataset limitations**
+
+There are some missing values: 70605 of `CULTIVAR_NAME`, 1530 of `PLANT_AREA`, 82253 of `DATE_PLANTED`, and 21826 of `Geom`. We might continually update how we deal with them through the design of the dashboard.
+
+The dataset does not contain trees that grow on private property or in the parks. The trees in this dataset are found on city-managed land such as along the roadways. Some trees are missing from the dataset. The information regarding tree circumference may be outdated or missing.
 
 ## Section 3. Research questions and usage scenarios
 
