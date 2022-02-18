@@ -18,7 +18,8 @@ Proposal document can be found [here](https://github.com/UBC-MDS/cherry_blossom_
 
 ### App sketch
 
-For an interactive version please visit the following link. The dropdown selections and the about link are clickable.
+Please checkout a scrollable interactive sketch on Figma. The dropdown selections and the about link are clickable:
+
 [Figma prototype](https://www.figma.com/proto/wL64Jd85dE2p9KtgRm4SHr/Katia's-mockup?node-id=3%3A86&scaling=scale-down&page-id=0%3A1&starting-point-node-id=3%3A86)
 
 ![image](https://raw.githubusercontent.com/UBC-MDS/cherry_blossom_tracker/main/sketch.png)
