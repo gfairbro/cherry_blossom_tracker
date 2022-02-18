@@ -16,7 +16,7 @@ Proposal document can be found [here](https://github.com/UBC-MDS/cherry_blossom_
 
 4. **Tree circumference range filter.** Tree circumference is a proxy for the size of the tree and its canopy. Dashboard visitors may look specifically for larger and older trees. They can adjust the tree circumference using a slider.
 
-<`TODO`: Insert Sketch here>
+![image](https://raw.githubusercontent.com/UBC-MDS/cherry_blossom_tracker/main/sketch.png)
 
 ## Contributing
 
