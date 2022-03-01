@@ -40,24 +40,19 @@ If you are proposing a feature:
 
 ## Get Started!
 
-Ready to contribute? Here's how to set up `group_25_py` for local development.
+Ready to contribute? Here's how to set up `cherry_blossom_tracker` for local development.
 
-1. Download a copy of `group_25_py` locally.
-2. Install `group_25_py` using `poetry`:
+1. Download a copy of `cherry_blossom_tracker` locally by forking this repo and cloning it.
 
-    ```console
-    $ poetry install
-    ```
-
-3. Use `git` (or similar) to create a branch for local development and make your changes:
+2. Use `git` (or similar) to create a branch for local development and make your changes:
 
     ```console
     $ git checkout -b name-of-your-bugfix-or-feature
     ```
 
-4. When you're done making changes, check that your changes conform to any code formatting requirements and pass any tests.
+3. When you're done making changes, check that your changes conform to any code formatting requirements and pass any tests.
 
-5. Commit your changes and open a pull request.
+4. Commit your changes and open a pull request.
 
 ## Pull Request Guidelines
 
@@ -69,5 +64,5 @@ Before you submit a pull request, check that it meets these guidelines:
 
 ## Code of Conduct
 
-Please note that the `group_25_py` project is released with a 
+Please note that the `cherry_blossom_tracker` project is released with a 
 Code of Conduct. By contributing to this project you agree to abide by its terms.
