@@ -28,16 +28,18 @@ app.layout = html.Div([
 ##Create Cultivar Chart
 def create_plot(neighbourhood):
     tree_plot = alt.Chart(trees[trees['NEIGHBOURHOOD_NAME'] == neighbourhood]).mark_bar().encode(
-        x=alt.X('count()', axis=alt.Axis(title='Number of Trees')),
-        y=alt.Y('COMMON_NAME:N', axis=alt.Axis(title='Tree Name'),
-        sort=alt.EncodingSortField(op='count', order='descending')),
-        tooltip='count()'
- #   ).transform_filter(
- #       (datum.count > 10)
-    ).configure_mark(
-        opacity=0.6,
-        color='pink'
-    ).interactive()
+        x=alt.X('count:Q', axis=alt.Axis(title='Number of Trees')),
+        y=alt.Y('COMMON_NAME:N', axis=alt.Axis(title='Tree Name'), sort=alt.SortField("count", order="descending")),
+        tooltip=alt.Tooltip('count:Q')
+        ).transform_aggregate(
+        count='count()',
+        groupby=['COMMON_NAME']
+        ).transform_filter(
+        'datum.count >= 10'
+        ).configure_mark(
+            opacity=0.6,
+            color='pink'
+        ).interactive()
 
     return tree_plot.to_html()
 if __name__ == '__main__':
