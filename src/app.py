@@ -2,6 +2,7 @@ import pandas as pd
 import altair as alt
 from altair import datum
 from dash import Dash, html, dcc, Input, Output
+import dash_bootstrap_components as dbc
 
 alt.data_transformers.disable_max_rows()
 
@@ -9,30 +10,63 @@ alt.data_transformers.disable_max_rows()
 trees = pd.read_csv("data/processed_trees.csv")
 
 # Build Front End
-app = Dash(__name__)
+app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
-app.layout = html.Div(
-    [
-        "Neighbourhood",
-        dcc.Dropdown(
-            id="data_filter",
-            value="Sunset",
-            options=[
-                {"label": i, "value": i} for i in trees.NEIGHBOURHOOD_NAME.unique()
-            ],
-        ),
+app.layout = html.Div([
+    html.H1('Vancouver cherry blossom tracker'),
+    dbc.Row([
+        dbc.Col([
+            html.Label(['Month'], style={'font-weight': 'bold'}),
+            dcc.Dropdown(
+                id="filter_month",
+                value="all_months",
+                options=[
+                    {'label': 'All months', 'value': 'all_months'},
+                    {'label': 'January', 'value': 'January'},
+                    {'label': 'March', 'value': 'March'},
+                    {'label': 'April', 'value': 'April'},
+                    {'label': 'October', 'value': 'October'},
+                    {'label': 'No Month', 'value': 'No_Month'}
+                    ],
+            ),
+        ]),
+        dbc.Col([
+            html.Label(['Neighbourhood'], style={'font-weight': 'bold'}),
+            dcc.Dropdown(
+                id="filter_neighbourhood",
+                value="all_neighbourhoods",
+                options=[{'label': 'All neighbourhoods', 'value': 'all_neighbourhoods'}] + [
+                    {"label": i, "value": i} for i in trees.NEIGHBOURHOOD_NAME.unique()
+                ],
+            ),
+        ]),
+        dbc.Col([
+            html.Label(['Cherry tree cultivars'], style={'font-weight': 'bold'}),
+            dcc.Dropdown(
+                id="filter_cultivar",
+                value="all_cultivars",
+                options=[{'label': 'All cultivars', 'value': 'all_cultivars'}] + [
+                    {"label": i, "value": i} for i in trees.CULTIVAR_NAME.unique()
+                ],
+            ),
+        ])
+    ]),
+    dbc.Row([
         html.Iframe(
             id="bar", style={"border-width": "0", "width": "100%", "height": "800px"}
-        ),
-    ]
-)
+        )
+    ])
+])
 
 
-@app.callback(Output("bar", "srcDoc"), Input("data_filter", "value"))
+@app.callback(
+    Output("bar", "srcDoc"), 
+    Input("filter_neighbourhood", "value"),
+    Input("filter_cultivar", "value"))
 ##Create Cultivar Chart
-def create_plot(neighbourhood):
+def create_plot(neighbourhood, cultivar):
     tree_plot = (
-        alt.Chart(trees[trees["NEIGHBOURHOOD_NAME"] == neighbourhood])
+        alt.Chart(trees[(trees["NEIGHBOURHOOD_NAME"] == neighbourhood) & (trees["CULTIVAR_NAME"] == cultivar)])
         .mark_bar()
         .encode(
             x=alt.X("count:Q", axis=alt.Axis(title="Number of Trees")),
