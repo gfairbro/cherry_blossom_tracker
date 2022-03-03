@@ -28,26 +28,46 @@ app.layout = html.Div([
                     {'label': 'October', 'value': 'October'},
                     {'label': 'No Month', 'value': 'No_Month'}
                     ],
-            ),
+            )
         ]),
         dbc.Col([
             html.Label(['Neighbourhood'], style={'font-weight': 'bold'}),
             dcc.Dropdown(
                 id="filter_neighbourhood",
                 value="all_neighbourhoods",
-                options=[{'label': 'All neighbourhoods', 'value': 'all_neighbourhoods'}] + [
+                options=[
+                    {'label': 'All neighbourhoods', 'value': 'all_neighbourhoods'}
+                ] + [
                     {"label": i, "value": i} for i in trees.NEIGHBOURHOOD_NAME.unique()
                 ],
-            ),
+            )
         ]),
         dbc.Col([
             html.Label(['Cherry tree cultivars'], style={'font-weight': 'bold'}),
             dcc.Dropdown(
                 id="filter_cultivar",
                 value="all_cultivars",
-                options=[{'label': 'All cultivars', 'value': 'all_cultivars'}] + [
+                options=[
+                    {'label': 'All cultivars', 'value': 'all_cultivars'}
+                ] + [
                     {"label": i, "value": i} for i in trees.CULTIVAR_NAME.unique()
                 ],
+            )
+        ]),
+        dbc.Col([
+            html.Label(['Cherry tree diameter'], style={'font-weight': 'bold'}),
+            dcc.RangeSlider(
+                id="slider_diameter",
+                min=0,
+                max=1,
+                marks={
+                    0: '0m',
+                    1: '1m'
+                },
+                tooltip={
+                    "placement": "bottom", 
+                    "always_visible": True
+                }
             ),
         ])
     ]),
