@@ -30,23 +30,16 @@ app.layout = html.Div([
                 dcc.RangeSlider(
                     id="slider_month",
                     min=0,
-                    max=12,
+                    max=5,
                     step=1,
-                    value=[0, 12],
+                    value=[0, 5],
                     marks={
                         0: 'NA',
                         1: 'Jan',
                         2: 'Feb',
                         3: 'Mar',
                         4: 'Apr',
-                        5: 'May',
-                        6: 'Jun',
-                        7: 'Jul',
-                        8: 'Aug',
-                        9: 'Sep',
-                        10: 'Oct',
-                        11: 'Nov',
-                        12: 'Dec'
+                        5: 'May'
                     }
                 )
             ], width=4),
@@ -163,9 +156,10 @@ def timeline(month_range, neighbourhood, cultivar, diameter_range):
 
     timeline = alt.Chart(trees_timeline).mark_bar().encode(
         x=alt.X('BLOOM_START', axis=alt.Axis(
-            values=[d.isoformat() for d in pd.date_range(start='2022-01-01', end='2022-12-31', freq='1M')],
+            values=[d.isoformat() for d in pd.date_range(start='2022-01-01', end='2022-5-31', freq='1M')],
             format="%b",
-            tickCount=12), title=None),
+            tickCount=5,
+            orient='top'), title=None),
         x2='BLOOM_END',
         y=alt.Y('CULTIVAR_NAME:N', title=None),
         tooltip=[
@@ -174,6 +168,10 @@ def timeline(month_range, neighbourhood, cultivar, diameter_range):
         ]
     ).configure_mark(
         color="pink"
+    ).configure_axis(
+        domainOpacity=0
+    ).configure_view(
+        strokeOpacity=0
     )
 
     return timeline.to_html()
