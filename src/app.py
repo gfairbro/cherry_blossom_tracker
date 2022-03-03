@@ -85,7 +85,7 @@ app.layout = html.Div([
     Input("filter_cultivar", "value"))
 ##Create Cultivar Chart
 def create_plot(neighbourhood, cultivar):
-    tree_plot = (
+    bar_plot = (
         alt.Chart(trees[(trees["NEIGHBOURHOOD_NAME"] == neighbourhood) & (trees["CULTIVAR_NAME"] == cultivar)])
         .mark_bar()
         .encode(
@@ -103,7 +103,7 @@ def create_plot(neighbourhood, cultivar):
         .interactive()
     )
 
-    return tree_plot.to_html()
+    return bar_plot.to_html()
 
 
 if __name__ == "__main__":
