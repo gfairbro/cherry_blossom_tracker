@@ -27,19 +27,29 @@ app.layout = html.Div([
         dbc.Row([
             dbc.Col([
                 html.Label(['Month'], style={'font-weight': 'bold'}),
-                dcc.Dropdown(
-                    id="filter_month",
-                    value="all_months",
-                    options=[
-                        {'label': 'All months', 'value': 'all_months'},
-                        {'label': 'January', 'value': 'January'},
-                        {'label': 'March', 'value': 'March'},
-                        {'label': 'April', 'value': 'April'},
-                        {'label': 'October', 'value': 'October'},
-                        {'label': 'No Month', 'value': 'No_Month'}
-                        ],
+                dcc.RangeSlider(
+                    id="slider_month",
+                    min=0,
+                    max=12,
+                    step=1,
+                    value=[0, 12],
+                    marks={
+                        0: 'NA',
+                        1: 'Jan',
+                        2: 'Feb',
+                        3: 'Mar',
+                        4: 'Apr',
+                        5: 'May',
+                        6: 'Jun',
+                        7: 'Jul',
+                        8: 'Aug',
+                        9: 'Sep',
+                        10: 'Oct',
+                        11: 'Nov',
+                        12: 'Dec'
+                    }
                 )
-            ]),
+            ], width=4),
             dbc.Col([
                 html.Label(['Neighbourhood'], style={'font-weight': 'bold'}),
                 dcc.Dropdown(
@@ -51,7 +61,7 @@ app.layout = html.Div([
                         {"label": i, "value": i} for i in trees.NEIGHBOURHOOD_NAME.unique()
                     ],
                 )
-            ]),
+            ], width=3),
             dbc.Col([
                 html.Label(['Cherry tree cultivars'], style={'font-weight': 'bold'}),
                 dcc.Dropdown(
@@ -63,7 +73,7 @@ app.layout = html.Div([
                         {"label": i, "value": i} for i in trees.CULTIVAR_NAME.unique()
                     ],
                 )
-            ]),
+            ], width=3),
             dbc.Col([
                 html.Label(['Cherry tree diameter'], style={'font-weight': 'bold'}),
                 dcc.RangeSlider(
@@ -79,7 +89,7 @@ app.layout = html.Div([
                         "placement": "bottom", 
                         "always_visible": True
                     }
-                ),
+                )
             ]),
         ]),
         style={'background-color': 'whitesmoke'}
@@ -127,20 +137,19 @@ def bar_plot(neighbourhood, cultivar):
 
 @app.callback(
     Output("timeline", "srcDoc"),
-    Input("filter_month", "value"),
+    Input("slider_month", "value"),
     Input("filter_neighbourhood", "value"),
     Input("filter_cultivar", "value"),
     Input("slider_diameter", "value"))
 ##Create Cultivar Chart
-def timeline(month, neighbourhood, cultivar, diameter_range):
+def timeline(month_range, neighbourhood, cultivar, diameter_range):
     trees_timeline = trees.dropna(subset=["BLOOM_START", "BLOOM_END"])
 
-    trees_timeline = trees_timeline[trees_timeline['DIAMETER'].between(diameter_range[0], diameter_range[1])]
+    trees_timeline = trees_timeline[
+        (trees_timeline['BLOOM_START_MONTH']>=month_range[0]) 
+        & (trees_timeline['BLOOM_END_MONTH']<=month_range[1])]
 
-    if month == 'all_months':
-        trees_timeline = trees_timeline
-    else:
-        trees_timeline = trees_timeline[trees_timeline['BLOOM_MONTH'] == month]
+    trees_timeline = trees_timeline[trees_timeline['DIAMETER'].between(diameter_range[0], diameter_range[1])]
 
     if neighbourhood == 'all_neighbourhoods':
         trees_timeline = trees_timeline
