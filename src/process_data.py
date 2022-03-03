@@ -34,5 +34,9 @@ trees_upload["NEIGHBOURHOOD_NAME"] = trees_upload["NEIGHBOURHOOD_NAME"].str.titl
 # Extract bloom month
 trees_upload["BLOOM_MONTH"] = pd.to_datetime(trees_upload['BLOOM_START']).dt.month_name()
 
+# Replace NA of CULTIVAR_NAME and BLOOM_MONTH
+trees_upload["BLOOM_MONTH"] = trees_upload["BLOOM_MONTH"].fillna("No_Month")
+trees_upload["CULTIVAR_NAME"] = trees_upload["CULTIVAR_NAME"].fillna("No_Cultivar")
+
 # save new data
 trees_upload.to_csv("../data/processed_trees.csv", index=False)
