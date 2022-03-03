@@ -13,8 +13,8 @@ bloom_include = pd.merge(left=trees, right=bloom_range, on="CULTIVAR_NAME", how=
 # drop inappropriate cultivars
 trees_upload = bloom_include[~bloom_include["CULTIVAR_NAME"].isin(drop)]
 
-# Drop NA cultivar name and coordinates (to prevent issues with map)
-trees_upload = trees_upload.dropna(subset=["CULTIVAR_NAME", "Geom"])
+# Drop NA coordinates (to prevent issues with map)
+trees_upload = trees_upload.dropna(subset=["Geom"])
 
 # extract coordinates
 def as_tuple(s):
