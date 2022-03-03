@@ -8,73 +8,93 @@ alt.data_transformers.disable_max_rows()
 
 ##import and wrangle data
 trees = pd.read_csv("data/processed_trees.csv")
+trees["BLOOM_START"] = pd.to_datetime(trees["BLOOM_START"])
+trees["BLOOM_END"] = pd.to_datetime(trees["BLOOM_END"])
 
 # Build Front End
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 app.layout = html.Div([
-    html.H1('Vancouver cherry blossom tracker'),
-    dbc.Row([
-        dbc.Col([
-            html.Label(['Month'], style={'font-weight': 'bold'}),
-            dcc.Dropdown(
-                id="filter_month",
-                value="all_months",
-                options=[
-                    {'label': 'All months', 'value': 'all_months'},
-                    {'label': 'January', 'value': 'January'},
-                    {'label': 'March', 'value': 'March'},
-                    {'label': 'April', 'value': 'April'},
-                    {'label': 'October', 'value': 'October'},
-                    {'label': 'No Month', 'value': 'No_Month'}
+    dbc.Container(
+        html.H1('Vancouver cherry blossom tracker'),
+        style={
+            'color': 'white', 
+            'background-color': 'orchid',
+            'font-family': 'Helvetica'
+        }
+    ),
+    dbc.Container(
+        dbc.Row([
+            dbc.Col([
+                html.Label(['Month'], style={'font-weight': 'bold'}),
+                dcc.Dropdown(
+                    id="filter_month",
+                    value="all_months",
+                    options=[
+                        {'label': 'All months', 'value': 'all_months'},
+                        {'label': 'January', 'value': 'January'},
+                        {'label': 'March', 'value': 'March'},
+                        {'label': 'April', 'value': 'April'},
+                        {'label': 'October', 'value': 'October'},
+                        {'label': 'No Month', 'value': 'No_Month'}
+                        ],
+                )
+            ]),
+            dbc.Col([
+                html.Label(['Neighbourhood'], style={'font-weight': 'bold'}),
+                dcc.Dropdown(
+                    id="filter_neighbourhood",
+                    value="all_neighbourhoods",
+                    options=[
+                        {'label': 'All neighbourhoods', 'value': 'all_neighbourhoods'}
+                    ] + [
+                        {"label": i, "value": i} for i in trees.NEIGHBOURHOOD_NAME.unique()
                     ],
-            )
+                )
+            ]),
+            dbc.Col([
+                html.Label(['Cherry tree cultivars'], style={'font-weight': 'bold'}),
+                dcc.Dropdown(
+                    id="filter_cultivar",
+                    value="all_cultivars",
+                    options=[
+                        {'label': 'All cultivars', 'value': 'all_cultivars'}
+                    ] + [
+                        {"label": i, "value": i} for i in trees.CULTIVAR_NAME.unique()
+                    ],
+                )
+            ]),
+            dbc.Col([
+                html.Label(['Cherry tree diameter'], style={'font-weight': 'bold'}),
+                dcc.RangeSlider(
+                    id="slider_diameter",
+                    min=0,
+                    max=150,
+                    value=[0, 150],
+                    marks={
+                        0: '0cm',
+                        150: '150cm'
+                    },
+                    tooltip={
+                        "placement": "bottom", 
+                        "always_visible": True
+                    }
+                ),
+            ]),
         ]),
-        dbc.Col([
-            html.Label(['Neighbourhood'], style={'font-weight': 'bold'}),
-            dcc.Dropdown(
-                id="filter_neighbourhood",
-                value="all_neighbourhoods",
-                options=[
-                    {'label': 'All neighbourhoods', 'value': 'all_neighbourhoods'}
-                ] + [
-                    {"label": i, "value": i} for i in trees.NEIGHBOURHOOD_NAME.unique()
-                ],
-            )
-        ]),
-        dbc.Col([
-            html.Label(['Cherry tree cultivars'], style={'font-weight': 'bold'}),
-            dcc.Dropdown(
-                id="filter_cultivar",
-                value="all_cultivars",
-                options=[
-                    {'label': 'All cultivars', 'value': 'all_cultivars'}
-                ] + [
-                    {"label": i, "value": i} for i in trees.CULTIVAR_NAME.unique()
-                ],
-            )
-        ]),
-        dbc.Col([
-            html.Label(['Cherry tree diameter'], style={'font-weight': 'bold'}),
-            dcc.RangeSlider(
-                id="slider_diameter",
-                min=0,
-                max=1,
-                marks={
-                    0: '0m',
-                    1: '1m'
-                },
-                tooltip={
-                    "placement": "bottom", 
-                    "always_visible": True
-                }
-            ),
-        ])
-    ]),
+        style={'background-color': 'whitesmoke'}
+    ),
     dbc.Row([
-        html.Iframe(
-            id="bar", style={"border-width": "0", "width": "100%", "height": "800px"}
-        )
+        dbc.Col([
+            html.Iframe(
+                id="bar", style={"border-width": "0", "width": "100%", "height": "800px"}
+            )
+        ]),
+        dbc.Col([
+            html.Iframe(
+                id="timeline", style={"border-width": "0", "width": "100%", "height": "100%"}
+            )
+        ]),
     ])
 ])
 
@@ -84,7 +104,7 @@ app.layout = html.Div([
     Input("filter_neighbourhood", "value"),
     Input("filter_cultivar", "value"))
 ##Create Cultivar Chart
-def create_plot(neighbourhood, cultivar):
+def bar_plot(neighbourhood, cultivar):
     bar_plot = (
         alt.Chart(trees[(trees["NEIGHBOURHOOD_NAME"] == neighbourhood) & (trees["CULTIVAR_NAME"] == cultivar)])
         .mark_bar()
@@ -104,6 +124,50 @@ def create_plot(neighbourhood, cultivar):
     )
 
     return bar_plot.to_html()
+
+@app.callback(
+    Output("timeline", "srcDoc"),
+    Input("filter_month", "value"),
+    Input("filter_neighbourhood", "value"),
+    Input("filter_cultivar", "value"),
+    Input("slider_diameter", "value"))
+##Create Cultivar Chart
+def timeline(month, neighbourhood, cultivar, diameter_range):
+    trees_timeline = trees.dropna(subset=["BLOOM_START", "BLOOM_END"])
+
+    trees_timeline = trees_timeline[trees_timeline['DIAMETER'].between(diameter_range[0], diameter_range[1])]
+
+    if month == 'all_months':
+        trees_timeline = trees_timeline
+    else:
+        trees_timeline = trees_timeline[trees_timeline['BLOOM_MONTH'] == month]
+
+    if neighbourhood == 'all_neighbourhoods':
+        trees_timeline = trees_timeline
+    else:
+        trees_timeline = trees_timeline[trees_timeline['NEIGHBOURHOOD_NAME'] == neighbourhood]
+
+    if cultivar == 'all_cultivars':
+        trees_timeline = trees_timeline
+    else:
+        trees_timeline = trees_timeline[trees_timeline['DIAMETER'] == cultivar]
+
+    timeline = alt.Chart(trees_timeline).mark_bar().encode(
+        x=alt.X('BLOOM_START', axis=alt.Axis(
+            values=[d.isoformat() for d in pd.date_range(start='2022-01-01', end='2022-12-31', freq='1M')],
+            format="%b",
+            tickCount=12), title=None),
+        x2='BLOOM_END',
+        y=alt.Y('CULTIVAR_NAME:N', title=None),
+        tooltip=[
+            alt.Tooltip('BLOOM_START', title='Start'), 
+            alt.Tooltip('BLOOM_END', title='End')
+        ]
+    ).configure_mark(
+        color="pink"
+    )
+
+    return timeline.to_html()
 
 
 if __name__ == "__main__":
