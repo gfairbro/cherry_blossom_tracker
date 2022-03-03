@@ -104,12 +104,17 @@ app.layout = html.Div([
 
 @app.callback(
     Output("bar", "srcDoc"), 
-    Input("filter_neighbourhood", "value"),
-    Input("filter_cultivar", "value"))
+    Input("filter_neighbourhood", "value"))
 ##Create Cultivar Chart
-def bar_plot(neighbourhood, cultivar):
+def bar_plot(neighbourhood):
+
+    if neighbourhood != 'all_neighbourhoods':
+        trees_bar = trees[trees['NEIGHBOURHOOD_NAME'] == neighbourhood]
+    else:
+        trees_bar = trees
+
     bar_plot = (
-        alt.Chart(trees[(trees["NEIGHBOURHOOD_NAME"] == neighbourhood) & (trees["CULTIVAR_NAME"] == cultivar)])
+        alt.Chart(trees_bar)
         .mark_bar()
         .encode(
             x=alt.X("count:Q", axis=alt.Axis(title="Number of Trees")),
