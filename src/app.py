@@ -5,7 +5,7 @@ from dash import Dash, html, dcc, Input, Output
 alt.data_transformers.disable_max_rows()
 
 ##import and wrangle data
-trees = pd.read_csv('/app/data/processed_trees.csv')
+trees = pd.read_csv('data/processed_trees.csv')
 
 #Build Front End
 app = Dash(__name__)
