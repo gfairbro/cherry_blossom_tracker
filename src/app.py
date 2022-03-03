@@ -144,15 +144,11 @@ def timeline(month_range, neighbourhood, cultivar, diameter_range):
 
     trees_timeline = trees_timeline[trees_timeline['DIAMETER'].between(diameter_range[0], diameter_range[1])]
 
-    if neighbourhood == 'all_neighbourhoods':
-        trees_timeline = trees_timeline
-    else:
+    if neighbourhood != 'all_neighbourhoods':
         trees_timeline = trees_timeline[trees_timeline['NEIGHBOURHOOD_NAME'] == neighbourhood]
 
-    if cultivar == 'all_cultivars':
-        trees_timeline = trees_timeline
-    else:
-        trees_timeline = trees_timeline[trees_timeline['DIAMETER'] == cultivar]
+    if cultivar != 'all_cultivars':
+        trees_timeline = trees_timeline[trees_timeline['CULTIVAR_NAME'] == cultivar]
 
     timeline = alt.Chart(trees_timeline).mark_bar().encode(
         x=alt.X('BLOOM_START', axis=alt.Axis(
