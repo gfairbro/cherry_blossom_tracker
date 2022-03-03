@@ -29,4 +29,4 @@ trees_upload["lat"] = trees_upload.Geom.apply(get_coord, args=[1])
 trees_upload["NEIGHBOURHOOD_NAME"] = trees_upload["NEIGHBOURHOOD_NAME"].str.title()
 
 # save new data
-trees_upload.to_csv("../data/processed_trees.csv")
+trees_upload.to_csv("../data/processed_trees.csv", index=False)
