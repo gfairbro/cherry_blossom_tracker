@@ -22,10 +22,11 @@ data_geojson_remote = alt.Data(
 
 # Setup app and layout/frontend
 app = Dash(
+    __name__,
     external_stylesheets=[
         "https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap",
         dbc.themes.BOOTSTRAP,
-    ]
+    ],
 )
 
 server = app.server
@@ -74,14 +75,14 @@ drop_hood = dcc.Dropdown(
             "value": "all_neighbourhoods",
         }
     ]
-    + [{"label": i, "value": i} for i in raw_trees.NEIGHBOURHOOD_NAME.unique()],
+    + [{"label": i, "value": i} for i in sorted(raw_trees.NEIGHBOURHOOD_NAME.unique())],
 )
 
 drop_cultivar = dcc.Dropdown(
     id="filter_cultivar",
     value="all_cultivars",
     options=[{"label": "All cultivars", "value": "all_cultivars"}]
-    + [{"label": i, "value": i} for i in raw_trees.CULTIVAR_NAME.unique()],
+    + [{"label": i, "value": i} for i in sorted(raw_trees.CULTIVAR_NAME.unique())],
 )
 
 # Range sliders
@@ -89,8 +90,8 @@ range_slider = dcc.RangeSlider(
     id="slider_diameter",
     min=0,
     max=150,
-    value=[0, 150],
-    marks={0: "0cm", 150: "150cm"},
+    value=[0, 100],
+    marks={0: "0cm", 100: "100cm"},
     tooltip={"placement": "bottom", "always_visible": True},
 )
 
@@ -330,7 +331,7 @@ def density_map(df):
 
 
 def bar_plot(trees_bar):
-    trees_bar = trees_bar.dropna(subset=["COMMON_NAME", "NEIGHBOURHOOD_NAME"])
+    trees_bar = trees_bar.dropna(subset=["CULTIVAR_NAME", "NEIGHBOURHOOD_NAME"])
 
     bar_plot = (
         alt.Chart(trees_bar)
@@ -338,14 +339,13 @@ def bar_plot(trees_bar):
         .encode(
             x=alt.X("count:Q", axis=alt.Axis(title="Number of Trees")),
             y=alt.Y(
-                "COMMON_NAME:N",
+                "CULTIVAR_NAME:N",
                 axis=alt.Axis(title="Tree Name"),
                 sort=alt.SortField("count", order="descending"),
             ),
             tooltip=alt.Tooltip("count:Q"),
         )
-        .transform_aggregate(count="count()", groupby=["COMMON_NAME"])
-        .transform_filter("datum.count >= 10")
+        .transform_aggregate(count="count()", groupby=["CULTIVAR_NAME"])
         .configure_mark(opacity=0.6, color="#F3B2D2")
         .interactive()
     )
