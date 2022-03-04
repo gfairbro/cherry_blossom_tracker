@@ -1,5 +1,5 @@
 import pandas as pd
-from dash import Dash, html, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output, no_update
 import altair as alt
 from vega_datasets import data
 import dash_bootstrap_components as dbc
@@ -24,10 +24,26 @@ server = app.server
 
 # C O M P O N E N T S
 
+# Collapse
+
+toast = html.Div(
+    [
+        dbc.Button(
+            "About",
+            id="simple-toast-toggle",
+            color="#B665A4",
+            className="mb-3",
+            n_clicks=0,
+        )
+    ]
+)
+
+
+
 # Header navigation component
 navbar = dbc.NavbarSimple(
     children=[
-        dbc.NavItem(dbc.NavLink("About", href="#"))
+        toast
     ],
     brand="Vancouver Cherry Blossom Tracker",
     brand_href="#",
@@ -79,14 +95,32 @@ range_slider = dcc.RangeSlider(
 # L A Y O U T
 
 app.layout = dbc.Container([
+    dbc.Toast(
+            [html.A("GitHub", href='https://github.com/UBC-MDS/cherry_blossom_tracker',
+            style={'color':'white', 'text-decoration': 'underline'}),
+            html.P("The dashboard was created by Katia Aristova, Gabriel Fairbrother, Chaoran Wang, TZ Yan. It is licensed under the terms of the GNU General Public License v3.0 license. You can find more information in our GitHub repo."),
+            html.A("Data", href='https://opendata.vancouver.ca/explore/dataset/street-trees/',
+            style={'color':'white', 'text-decoration': 'underline'}),
+            html.P("The dataset was created by the City of Vancouver and accessed via Vancouver Open Data website."),
+            html.A("Logo", href='https://thenounproject.com/icon/cherry-blossoms-2818017/',
+            style={'color':'white', 'text-decoration': 'underline'}),
+            html.P("The cherry blossom logo Cherry Blossoms by Olena Panasovska from NounProject.com"),
+        ],
+            id="simple-toast",
+            header="About",
+            icon="primary",
+            dismissable=True,
+            is_open=False,
+        ),
     dbc.Container([
         dbc.Container([
             dbc.Row([
             dbc.Col(
                 html.Div(
-                    html.Img(src = 'assets/logo.png', height='50px')),
+                    html.Img(src = 'assets/logo.png', height='70px')),
                     id='logo-img',
-                    width = 1),
+                    width = 1,
+                    style={'padding-top': '5px'}),
             dbc.Col(navbar, style = {'padding': '0'}, width = 11)
         ])
     ],
@@ -299,6 +333,15 @@ def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range)
     diameter = diameter_plot(filtered_trees)
 
     return bar, timeline, diameter
+
+@app.callback(
+    Output("simple-toast", "is_open"),
+    [Input("simple-toast-toggle", "n_clicks")],
+)
+def open_toast(n):
+    if n == 0:
+        return no_update
+    return True
 
 if __name__ == '__main__':
     app.run_server(debug=True, port=8000)

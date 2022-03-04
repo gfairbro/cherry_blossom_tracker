@@ -89,3 +89,34 @@ label {
 #row-map {
     margin: 20px 0;
 }
+
+#simple-toast-toggle {
+    color: white;
+    margin: 0!important;
+}
+
+#simple-toast-toggle:hover {
+    text-decoration: underline;
+}
+
+#simple-toast {
+    position: absolute;
+    right: 40%;
+    z-index: 5;
+    top: 10px;
+    width: 400px;
+    background-color: #6D3962;
+    box-shadow: 0px 5px 20px 0px rgba(0, 0, 0, 0.36);
+    color: white;
+}
+
+.toast-header {
+    background-color: #6D3962;
+    color: white;
+    font-weight: bold;
+    border-color: white;
+}
+
+.text-primary {
+    color:white!important;
+}
