@@ -404,7 +404,7 @@ def timeline_plot(trees_timeline):
                 title=None,
             ),
             x2="BLOOM_END",
-            y=alt.Y("CULTIVAR_NAME:N", title=None),
+            y=alt.Y("CULTIVAR_NAME:N", title=None, sort="x"),
             tooltip=[
                 alt.Tooltip("BLOOM_START", title="Start"),
                 alt.Tooltip("BLOOM_END", title="End"),
