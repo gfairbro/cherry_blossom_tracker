@@ -8,7 +8,9 @@ from datetime import date
 alt.data_transformers.disable_max_rows()
 
 ##import and wrangle data
-raw_trees = pd.read_csv("../data/processed_trees.csv", parse_dates=["BLOOM_START", "BLOOM_END"], dayfirst=True)
+raw_trees = pd.read_csv("../data/processed_trees.csv")
+raw_trees["BLOOM_START"] = pd.to_datetime(raw_trees["BLOOM_START"])
+raw_trees["BLOOM_END"] = pd.to_datetime(raw_trees["BLOOM_END"])
 
 
 # Build Front End
