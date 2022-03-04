@@ -88,7 +88,7 @@ drop_cultivar = dcc.Dropdown(
 range_slider = dcc.RangeSlider(
     id="slider_diameter",
     min=0,
-    max=100,
+    max=150,
     value=[0, 100],
     marks={0: "0cm", 100: "100cm"},
     tooltip={"placement": "bottom", "always_visible": True},
@@ -334,7 +334,7 @@ def bar_plot(trees_bar):
             ),
             tooltip=alt.Tooltip("count:Q"),
         )
-        .transform_aggregate(count="count()", groupby=["CULTIVAR_NAME"], rank=rank(count))
+        .transform_aggregate(count="count()", groupby=["CULTIVAR_NAME"], rank=rank(countn))
         .transform_filter(alt.datum.rank < 11)
         .configure_mark(opacity=0.6, color="#F3B2D2")
         .interactive()
