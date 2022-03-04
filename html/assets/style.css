@@ -1,0 +1,22 @@
+body {
+    font-family: 'Montserrat';
+}
+
+#header {
+    height: 70px;
+    background-color: #B665A4;
+    padding-top: 10px;
+}
+
+#logo-img {
+    text-align: right;
+    padding: 0;
+    background-color: #B665A4;
+}
+
+#menu-bar {
+    background-color: #F3F3F3;
+    margin-top: 0px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
