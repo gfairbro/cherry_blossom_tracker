@@ -8,7 +8,7 @@ from datetime import date
 alt.data_transformers.disable_max_rows()
 
 ##import and wrangle data
-raw_trees = pd.read_csv("../data/processed_trees.csv")
+raw_trees = pd.read_csv("data/processed_trees.csv")
 raw_trees["BLOOM_START"] = pd.to_datetime(raw_trees["BLOOM_START"])
 raw_trees["BLOOM_END"] = pd.to_datetime(raw_trees["BLOOM_END"])
 
@@ -194,17 +194,20 @@ def timeline_plot(trees_timeline):
 
     return timeline.to_html()
 
-@app.callback(Output("bar", "srcDoc"), 
-              Output("timeline", "srcDoc"),
-                Input("picker_date", "start_date"),
-                Input("picker_date", "end_date"),
-                Input("filter_neighbourhood", "value"),
-                Input("filter_cultivar", "value"),
-                Input("slider_diameter", "value"),)
-def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range):
-#Build new dataset and call all charts
 
-    #Date input Cleanup
+@app.callback(
+    Output("bar", "srcDoc"),
+    Output("timeline", "srcDoc"),
+    Input("picker_date", "start_date"),
+    Input("picker_date", "end_date"),
+    Input("filter_neighbourhood", "value"),
+    Input("filter_cultivar", "value"),
+    Input("slider_diameter", "value"),
+)
+def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range):
+    # Build new dataset and call all charts
+
+    # Date input Cleanup
     if start_date is None:
         start_date = "2022-01-01"
     if end_date is None:
@@ -213,12 +216,14 @@ def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range)
     end_date = pd.Timestamp(date.fromisoformat(end_date))
 
     filtered_trees = raw_trees
-    #Filter by neighbourhood
+    # Filter by neighbourhood
     if neighbourhood != "all_neighbourhoods":
-        filtered_trees = filtered_trees[filtered_trees["NEIGHBOURHOOD_NAME"] == neighbourhood]
-    
-    #Filter by date
-    
+        filtered_trees = filtered_trees[
+            filtered_trees["NEIGHBOURHOOD_NAME"] == neighbourhood
+        ]
+
+    # Filter by date
+
     filtered_trees = filtered_trees[
         (
             (filtered_trees["BLOOM_START"] <= start_date)
@@ -232,7 +237,7 @@ def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range)
         | (filtered_trees["BLOOM_END"].between(start_date, end_date))
     ]
 
-    #Filter by Diameter
+    # Filter by Diameter
     filtered_trees = filtered_trees[
         filtered_trees["DIAMETER"].between(diameter_range[0], diameter_range[1])
     ]
@@ -244,6 +249,7 @@ def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range)
     timeline = timeline_plot(filtered_trees)
 
     return bar, timeline
+
 
 if __name__ == "__main__":
     app.run_server(debug=True)
