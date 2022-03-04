@@ -91,7 +91,7 @@ range_slider = dcc.RangeSlider(
     min=0,
     max=150,
     value=[0, 100],
-    marks={0: "0cm", 100: "100cm"},
+    marks={0: "0cm", 150: "150cm"},
     tooltip={"placement": "bottom", "always_visible": True},
 )
 
