@@ -215,9 +215,8 @@ app.layout = dbc.Container(
                                         dcc.Loading(
                                             id="loading-1",
                                             type="default",
-                                            children=html.Div(id="loading-output-2"),
+                                            children=dcc.Graph(id="map"),
                                         ),
-                                        dcc.Graph(id="map"),
                                     ]
                                 ),
                             ],
@@ -234,9 +233,8 @@ app.layout = dbc.Container(
                                 dcc.Loading(
                                     id="loading-2",
                                     type="default",
-                                    children=html.Div(id="loading-output-3"),
+                                    children=html.Iframe(id="bar"),
                                 ),
-                                html.Iframe(id="bar"),
                             ],
                             width=6,
                             className="chart-box",
@@ -247,9 +245,8 @@ app.layout = dbc.Container(
                                 dcc.Loading(
                                     id="loading-3",
                                     type="default",
-                                    children=html.Div(id="loading-output-4"),
+                                    children=html.Iframe(id="timeline"),
                                 ),
-                                html.Iframe(id="timeline"),
                             ],
                             width=6,
                             className="chart-box",
@@ -265,9 +262,8 @@ app.layout = dbc.Container(
                                 dcc.Loading(
                                     id="loading-4",
                                     type="default",
-                                    children=html.Div(id="loading-output-5"),
+                                    children=html.Iframe(id="diameter"),
                                 ),
-                                html.Iframe(id="diameter"),
                             ],
                             width=6,
                             className="chart-box",
@@ -278,15 +274,14 @@ app.layout = dbc.Container(
                                 dcc.Loading(
                                     id="loading-5",
                                     type="default",
-                                    children=html.Div(id="loading-output-1"),
-                                ),
-                                html.Iframe(
-                                    id="density",
-                                    style={
-                                        "height": "400px",
-                                        "width": "100%",
-                                        "border": "0",
-                                    },
+                                    children=html.Iframe(
+                                        id="density",
+                                        style={
+                                            "height": "400px",
+                                            "width": "100%",
+                                            "border": "0",
+                                        },
+                                    ),
                                 ),
                             ],
                             width=6,
@@ -324,6 +319,9 @@ def street_map(df):
     map_plot.update_layout(
         mapbox_style="open-street-map", autosize=True, margin=dict(t=0, b=0, l=0, r=0)
     )
+
+    map_plot.update_xaxes(visible=False)
+    map_plot.update_yaxes(visible=False)
 
     return map_plot
 
@@ -446,11 +444,6 @@ def diameter_plot(trees_df):
     Output("diameter", "srcDoc"),
     Output("density", "srcDoc"),
     Output("map", "figure"),
-    Output("loading-output-1", "children"),
-    Output("loading-output-2", "children"),
-    Output("loading-output-3", "children"),
-    Output("loading-output-4", "children"),
-    Output("loading-output-5", "children"),
     Input("picker_date", "start_date"),
     Input("picker_date", "end_date"),
     Input("filter_neighbourhood", "value"),
@@ -505,7 +498,7 @@ def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range)
     density = density_map(filtered_trees)
     big_map = street_map(filtered_trees)
 
-    return bar, timeline, diameter, density, big_map, "", "", "", "", ""
+    return bar, timeline, diameter, density, big_map
 
 
 @app.callback(
