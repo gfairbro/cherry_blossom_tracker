@@ -5,7 +5,7 @@ body {
 #header {
     height: 70px;
     background-color: #B665A4;
-    padding-top: 10px;
+    padding: 10px 10%;
 }
 
 #logo-img {
@@ -17,6 +17,22 @@ body {
 #menu-bar {
     background-color: #F3F3F3;
     margin-top: 0px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding: 5px 10%;
+}
+
+.DateInput_input {
+    font-size: 15px;
+    color:black;
+}
+
+.DateRangePickerInput_arrow_svg {
+    width: 15px;
+}
+
+.DateInput {
+    width: 100px;
+}
+
+#content {
+    max-width: 100%;
 }
