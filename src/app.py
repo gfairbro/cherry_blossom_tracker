@@ -335,7 +335,6 @@ def bar_plot(trees_bar):
             tooltip=alt.Tooltip("count:Q"),
         )
         .transform_aggregate(count="count()", groupby=["CULTIVAR_NAME"])
-        .transform_filter("datum.count > 10")
         .configure_mark(opacity=0.6, color="#F3B2D2")
         .interactive()
     )
