@@ -1,7 +1,6 @@
 import pandas as pd
 from dash import Dash, html, dcc, Input, Output, no_update
 import altair as alt
-from vega_datasets import data
 import dash_bootstrap_components as dbc
 from datetime import date
 alt.data_transformers.disable_max_rows()
