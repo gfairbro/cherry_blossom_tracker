@@ -36,7 +36,6 @@ navbar = dbc.NavbarSimple(
 )
 
 # Menu filters
-
 date_picker = dcc.DatePickerRange(
     id="picker_date",
     min_date_allowed=date(2022, 1, 1),
@@ -68,7 +67,6 @@ drop_cultivar = dcc.Dropdown(
 )
 
 # Range sliders
-
 range_slider = dcc.RangeSlider(
     id="slider_diameter",
     min=0,
@@ -78,9 +76,7 @@ range_slider = dcc.RangeSlider(
     tooltip={"placement": "bottom", "always_visible": True},
 )
 
-
-# Read in global data
-cars = data.cars()
+# L A Y O U T
 
 app.layout = dbc.Container([
     dbc.Container([
@@ -111,12 +107,12 @@ app.layout = dbc.Container([
                     ],
                     width = 3),
                     dbc.Col([
-                        html.Label(["Cherry cultivars (types)"]),
+                        html.Label(["Tree cultivar (type)"]),
                         drop_cultivar
                     ],
                     width = 3),
                 dbc.Col([
-                    html.Label(["Cherry tree diameter"],),
+                    html.Label(["Tree diameter"],),
                     range_slider
                     ],
                     width = 3)
@@ -125,14 +121,18 @@ app.layout = dbc.Container([
     ])],
     id = 'nav-back'),
     dbc.Container([
-        dbc.Row([dbc.Col(
-        width = 12, 
-        style = {
-            'height': '400px',
-            'background-image':'url("assets/map_placeholder.png")'})]),
+        dbc.Row([dbc.Col([
+            html.Label(["Cherry blossom tree map"]),
+            html.Div(
+                style = {
+                    'height': '400px',
+                    'background-color':'lightgray'})
+        ],
+        width = 12,
+        id='row-map')]),
         dbc.Row([
             dbc.Col([
-                html.Label(["Cherry cultivars (types)"]),
+                html.Label(["Tree cultivars (types)"]),
                 html.Iframe(
                     id='bar')],
                     width = 6,
@@ -147,12 +147,25 @@ app.layout = dbc.Container([
                     ],
                     className='row-chart'),
         dbc.Row([
-            dbc.Col(width = 6, style={'height': '500px', 'background-color': 'gray'}),
-            dbc.Col(width = 6, style={'height': '500px', 'background-color': 'lightgrey'})])
+            dbc.Col([
+                html.Label(["Tree diameters"]),
+                html.Iframe(
+                    id='diameter')],
+                    width = 6,
+                    className = 'chart-box'),
+            dbc.Col([
+                html.Label(["Tree density"]),
+                html.Iframe()],
+                    width=6,
+                    className = 'chart-box'),
+                ],
+            className='row-chart')
             ])
         ],
     id = 'content'
 )
+
+# C H A R T  F U N C T I O N S
 
 def bar_plot(trees_bar):
     trees_bar = trees_bar.dropna(subset=["COMMON_NAME", "NEIGHBOURHOOD_NAME"])
@@ -213,10 +226,25 @@ def timeline_plot(trees_timeline):
 
     return timeline.to_html()
 
+def diameter_plot(trees_df):
+    trees_df = trees_df.dropna(subset=["DIAMETER"])
+    trees_df["DIAMETER_CM"] = trees_df["DIAMETER"] * 2.54
+    diameter = alt.Chart(trees_df).transform_density(
+        'DIAMETER_CM',
+        as_=['DIAMETER', 'density']).mark_area(
+            interpolate='monotone', color='#F3B2D2',
+            opacity=0.4,
+            line=({'color':'#B665A4'})).encode(
+        alt.X('DIAMETER', title = 'Tree diameter (cm)', scale=alt.Scale(nice=False)),
+        alt.Y('density:Q', title="Density", axis=alt.Axis(labels=False))
+    )
+    return diameter.to_html()
+
 # Set up callbacks/backend
 @app.callback(
     Output("bar", "srcDoc"),
     Output("timeline", "srcDoc"),
+    Output("diameter", "srcDoc"),
     Input("picker_date", "start_date"),
     Input("picker_date", "end_date"),
     Input("filter_neighbourhood", "value"),
@@ -236,6 +264,7 @@ def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range)
     end_date = pd.Timestamp(date.fromisoformat(end_date))
 
     filtered_trees = raw_trees
+
     # Filter by neighbourhood
     if neighbourhood != "all_neighbourhoods":
         filtered_trees = filtered_trees[
@@ -267,8 +296,9 @@ def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range)
 
     bar = bar_plot(filtered_trees)
     timeline = timeline_plot(filtered_trees)
+    diameter = diameter_plot(filtered_trees)
 
-    return bar, timeline
+    return bar, timeline, diameter
 
 if __name__ == '__main__':
     app.run_server(debug=True, port=8000)
