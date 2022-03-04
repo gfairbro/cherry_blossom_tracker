@@ -311,6 +311,7 @@ def street_map(df):
             "DIAMETER": True,
             "lat": False,
             "lon": False,
+            "TREE_ID": True,
         },
         zoom=10.9,
         height=600,
@@ -449,8 +450,11 @@ def diameter_plot(trees_df):
     Input("filter_neighbourhood", "value"),
     Input("filter_cultivar", "value"),
     Input("slider_diameter", "value"),
+    Input("map", "selectedData"),
 )
-def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range):
+def main_callback(
+    start_date, end_date, neighbourhood, cultivar, diameter_range, selectedData
+):
     # Build new dataset and call all charts
 
     # Date input Cleanup
@@ -462,6 +466,17 @@ def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range)
     end_date = pd.Timestamp(date.fromisoformat(end_date))
 
     filtered_trees = raw_trees
+
+    # Filter by selection from big map
+    if selectedData is not None:
+        selectedTrees = []
+        if "points" in selectedData:
+            if selectedData["points"] is not None:
+                for point in selectedData["points"]:
+                    # print(point)
+                    selectedTrees.append(point["customdata"][-1])
+                # print(selectedTrees)
+        filtered_trees = filtered_trees[filtered_trees["TREE_ID"].isin(selectedTrees)]
 
     # Filter by neighbourhood
     if neighbourhood != "all_neighbourhoods":
