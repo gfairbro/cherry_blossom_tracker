@@ -1,10 +1,20 @@
+import pandas as pd
 from dash import Dash, html, dcc, Input, Output
 import altair as alt
 from vega_datasets import data
 import dash_bootstrap_components as dbc
+from datetime import date
+alt.data_transformers.disable_max_rows()
 
-# Navbar component
+# Data (wrangled)
+raw_trees = pd.read_csv("../data/processed_trees.csv", parse_dates=["BLOOM_START", "BLOOM_END"], dayfirst=True)
 
+# Setup app and layout/frontend
+app = Dash(external_stylesheets=[
+    'https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap',
+    dbc.themes.BOOTSTRAP])
+
+# Header navigation component
 navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dbc.NavLink("About", href="#"))
@@ -15,7 +25,15 @@ navbar = dbc.NavbarSimple(
     dark=True,
 )
 
-# Drop placeholder
+# Menu filters
+
+date_picker = dcc.DatePickerRange(
+    id="picker_date",
+    min_date_allowed=date(2022, 1, 1),
+    max_date_allowed=date(2022, 5, 30),
+    start_date_placeholder_text="Start Period",
+    end_date_placeholder_text="End Period",
+)
 
 drop_hood = dcc.Dropdown(
     id='hood',
@@ -24,11 +42,6 @@ drop_hood = dcc.Dropdown(
 
 # Read in global data
 cars = data.cars()
-
-# Setup app and layout/frontend
-app = Dash(external_stylesheets=[
-    'https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap',
-    dbc.themes.BOOTSTRAP])
 
 app.layout = dbc.Container([
     dbc.Row([
@@ -41,7 +54,7 @@ app.layout = dbc.Container([
     ],
     id = 'header'),
     dbc.Row([
-        dbc.Col(drop_hood, width = 3),
+        dbc.Col(date_picker, width = 4),
         dbc.Col('Text', width = 2)],
         id = 'menu-bar'),
     dbc.Row([dbc.Col(
@@ -86,4 +99,4 @@ def plot_altair(xcol, ycol):
     return chart.to_html()
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=8000)
