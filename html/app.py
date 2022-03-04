@@ -7,12 +7,17 @@ from datetime import date
 alt.data_transformers.disable_max_rows()
 
 # Data (wrangled)
-raw_trees = pd.read_csv("../data/processed_trees.csv", parse_dates=["BLOOM_START", "BLOOM_END"], dayfirst=True)
+raw_trees = pd.read_csv("data/processed_trees.csv")
+raw_trees["BLOOM_START"] = pd.to_datetime(raw_trees["BLOOM_START"], format="%d/%m/%Y")
+raw_trees["BLOOM_END"] = pd.to_datetime(raw_trees["BLOOM_END"], format="%d/%m/%Y")
+
 
 # Setup app and layout/frontend
 app = Dash(external_stylesheets=[
     'https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap',
     dbc.themes.BOOTSTRAP])
+
+server = app.server
 
 # C O M P O N E N T S
 
@@ -141,8 +146,6 @@ app.layout = dbc.Container([
         ],
     id = 'content'
 )
-
-
         
 # Set up callbacks/backend
 @app.callback(
