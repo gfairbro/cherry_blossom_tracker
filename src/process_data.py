@@ -31,12 +31,6 @@ trees_upload["lat"] = trees_upload.Geom.apply(get_coord, args=[1])
 # Convert neighbourhood to title case (to match with map geojson)
 trees_upload["NEIGHBOURHOOD_NAME"] = trees_upload["NEIGHBOURHOOD_NAME"].str.title()
 
-# Convert bloom date to datetime format
-trees_upload["BLOOM_START"] = pd.to_datetime(
-    trees_upload["BLOOM_START"], format="%d/%m/%Y"
-)
-trees_upload["BLOOM_END"] = pd.to_datetime(trees_upload["BLOOM_END"], format="%d/%m/%Y")
-
 # Replace NA of CULTIVAR_NAME
 trees_upload["CULTIVAR_NAME"] = trees_upload["CULTIVAR_NAME"].fillna("No_Cultivar")
 
