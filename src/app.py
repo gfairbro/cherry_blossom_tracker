@@ -21,7 +21,7 @@ data_geojson_remote = alt.Data(
 )
 
 # Setup app and layout/frontend
-app = Dash(
+app = Dash(__name__,
     external_stylesheets=[
         "https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap",
         dbc.themes.BOOTSTRAP,
