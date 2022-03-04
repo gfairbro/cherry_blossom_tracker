@@ -210,7 +210,16 @@ app.layout = dbc.Container(
                         dbc.Col(
                             [
                                 html.Label(["Cherry blossom tree map"]),
-                                dbc.Col(dcc.Graph(id="map")),
+                                dbc.Col(
+                                    [
+                                        dcc.Loading(
+                                            id="loading-1",
+                                            type="default",
+                                            children=html.Div(id="loading-output-2"),
+                                        ),
+                                        dcc.Graph(id="map"),
+                                    ]
+                                ),
                             ],
                             width=12,
                             id="row-map",
@@ -222,6 +231,11 @@ app.layout = dbc.Container(
                         dbc.Col(
                             [
                                 html.Label(["Tree cultivars (types)"]),
+                                dcc.Loading(
+                                    id="loading-2",
+                                    type="default",
+                                    children=html.Div(id="loading-output-3"),
+                                ),
                                 html.Iframe(id="bar"),
                             ],
                             width=6,
@@ -230,6 +244,11 @@ app.layout = dbc.Container(
                         dbc.Col(
                             [
                                 html.Label(["Blooming timeline"]),
+                                dcc.Loading(
+                                    id="loading-3",
+                                    type="default",
+                                    children=html.Div(id="loading-output-4"),
+                                ),
                                 html.Iframe(id="timeline"),
                             ],
                             width=6,
@@ -243,6 +262,11 @@ app.layout = dbc.Container(
                         dbc.Col(
                             [
                                 html.Label(["Tree diameters"]),
+                                dcc.Loading(
+                                    id="loading-4",
+                                    type="default",
+                                    children=html.Div(id="loading-output-5"),
+                                ),
                                 html.Iframe(id="diameter"),
                             ],
                             width=6,
@@ -251,6 +275,11 @@ app.layout = dbc.Container(
                         dbc.Col(
                             [
                                 html.Label(["Tree density"]),
+                                dcc.Loading(
+                                    id="loading-5",
+                                    type="default",
+                                    children=html.Div(id="loading-output-1"),
+                                ),
                                 html.Iframe(
                                     id="density",
                                     style={
@@ -417,6 +446,11 @@ def diameter_plot(trees_df):
     Output("diameter", "srcDoc"),
     Output("density", "srcDoc"),
     Output("map", "figure"),
+    Output("loading-output-1", "children"),
+    Output("loading-output-2", "children"),
+    Output("loading-output-3", "children"),
+    Output("loading-output-4", "children"),
+    Output("loading-output-5", "children"),
     Input("picker_date", "start_date"),
     Input("picker_date", "end_date"),
     Input("filter_neighbourhood", "value"),
@@ -471,7 +505,7 @@ def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range)
     density = density_map(filtered_trees)
     big_map = street_map(filtered_trees)
 
-    return bar, timeline, diameter, density, big_map
+    return bar, timeline, diameter, density, big_map, "", "", "", "", ""
 
 
 @app.callback(
