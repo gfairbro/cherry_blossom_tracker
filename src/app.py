@@ -3,6 +3,8 @@ from dash import Dash, html, dcc, Input, Output, no_update
 import altair as alt
 import dash_bootstrap_components as dbc
 from datetime import date
+import plotly.express as px
+
 alt.data_transformers.disable_max_rows()
 
 # Data (wrangled)
@@ -12,12 +14,19 @@ raw_trees["BLOOM_END"] = pd.to_datetime(raw_trees["BLOOM_END"], format="%d/%m/%Y
 raw_trees["CULTIVAR_NAME"] = raw_trees["CULTIVAR_NAME"].str.title()
 raw_trees["COMMON_NAME"] = raw_trees["COMMON_NAME"].str.title()
 
-
+# Vancouver geojson
+url_geojson = "https://raw.githubusercontent.com/UBC-MDS/cherry_blossom_tracker/main/data/vancouver.geojson"
+data_geojson_remote = alt.Data(
+    url=url_geojson, format=alt.DataFormat(property="features", type="json")
+)
 
 # Setup app and layout/frontend
-app = Dash(external_stylesheets=[
-    'https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap',
-    dbc.themes.BOOTSTRAP])
+app = Dash(
+    external_stylesheets=[
+        "https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap",
+        dbc.themes.BOOTSTRAP,
+    ]
+)
 
 server = app.server
 
@@ -38,12 +47,9 @@ toast = html.Div(
 )
 
 
-
 # Header navigation component
 navbar = dbc.NavbarSimple(
-    children=[
-        toast
-    ],
+    children=[toast],
     brand="Vancouver Cherry Blossom Tracker",
     brand_href="#",
     color="#B665A4",
@@ -63,22 +69,19 @@ drop_hood = dcc.Dropdown(
     id="filter_neighbourhood",
     value="all_neighbourhoods",
     options=[
-        { "label": "All neighbourhoods", "value": "all_neighbourhoods",
-        }] + 
-        [{"label": i, "value": i}
-        for i in raw_trees.NEIGHBOURHOOD_NAME.unique()
-        ]
-    )
+        {
+            "label": "All neighbourhoods",
+            "value": "all_neighbourhoods",
+        }
+    ]
+    + [{"label": i, "value": i} for i in raw_trees.NEIGHBOURHOOD_NAME.unique()],
+)
 
 drop_cultivar = dcc.Dropdown(
     id="filter_cultivar",
     value="all_cultivars",
-    options=[
-        {"label": "All cultivars", "value": "all_cultivars"}
-        ] +
-        [{"label": i, "value": i}
-        for i in raw_trees.CULTIVAR_NAME.unique()
-        ]
+    options=[{"label": "All cultivars", "value": "all_cultivars"}]
+    + [{"label": i, "value": i} for i in raw_trees.CULTIVAR_NAME.unique()],
 )
 
 # Range sliders
@@ -93,112 +96,228 @@ range_slider = dcc.RangeSlider(
 
 # L A Y O U T
 
-app.layout = dbc.Container([
-    dbc.Toast(
-            [html.A("GitHub", href='https://github.com/UBC-MDS/cherry_blossom_tracker',
-            style={'color':'white', 'text-decoration': 'underline'}),
-            html.P("The dashboard was created by Katia Aristova, Gabriel Fairbrother, Chaoran Wang, TZ Yan. It is licensed under the terms of the GNU General Public License v3.0 license. You can find more information in our GitHub repo."),
-            html.A("Data", href='https://opendata.vancouver.ca/explore/dataset/street-trees/',
-            style={'color':'white', 'text-decoration': 'underline'}),
-            html.P("The dataset was created by the City of Vancouver and accessed via Vancouver Open Data website."),
-            html.A("Logo", href='https://thenounproject.com/icon/cherry-blossoms-2818017/',
-            style={'color':'white', 'text-decoration': 'underline'}),
-            html.P("The cherry blossom logo Cherry Blossoms by Olena Panasovska from NounProject.com"),
-        ],
+app.layout = dbc.Container(
+    [
+        dbc.Toast(
+            [
+                html.A(
+                    "GitHub",
+                    href="https://github.com/UBC-MDS/cherry_blossom_tracker",
+                    style={"color": "white", "text-decoration": "underline"},
+                ),
+                html.P(
+                    "The dashboard was created by Katia Aristova, Gabriel Fairbrother, Chaoran Wang, TZ Yan. It is licensed under the terms of the GNU General Public License v3.0 license. You can find more information in our GitHub repo."
+                ),
+                html.A(
+                    "Data",
+                    href="https://opendata.vancouver.ca/explore/dataset/street-trees/",
+                    style={"color": "white", "text-decoration": "underline"},
+                ),
+                html.P(
+                    "The dataset was created by the City of Vancouver and accessed via Vancouver Open Data website."
+                ),
+                html.A(
+                    "Logo",
+                    href="https://thenounproject.com/icon/cherry-blossoms-2818017/",
+                    style={"color": "white", "text-decoration": "underline"},
+                ),
+                html.P(
+                    "The cherry blossom logo Cherry Blossoms by Olena Panasovska from NounProject.com"
+                ),
+            ],
             id="simple-toast",
             header="About",
             icon="primary",
             dismissable=True,
             is_open=False,
         ),
-    dbc.Container([
-        dbc.Container([
-            dbc.Row([
-            dbc.Col(
-                html.Div(
-                    html.Img(src = 'assets/logo.png', height='70px')),
-                    id='logo-img',
-                    width = 1,
-                    style={'padding-top': '5px'}),
-            dbc.Col(navbar, style = {'padding': '0'}, width = 11)
-        ])
-    ],
-    id = 'header')
-    ],
-    id = 'header-back'),
-    dbc.Container([
-        dbc.Container([
-            dbc.Row([
-                dbc.Col([
-                    html.Label(["Blossom date"],),
-                    date_picker
+        dbc.Container(
+            [
+                dbc.Container(
+                    [
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    html.Div(
+                                        html.Img(src="assets/logo.png", height="70px")
+                                    ),
+                                    id="logo-img",
+                                    width=1,
+                                    style={"padding-top": "5px"},
+                                ),
+                                dbc.Col(navbar, style={"padding": "0"}, width=11),
+                            ]
+                        )
                     ],
-                    width = 3),
-                dbc.Col([
-                    html.Label(["Neighbourhood"],),
-                    drop_hood
-                    ],
-                    width = 3),
-                    dbc.Col([
-                        html.Label(["Tree cultivar (type)"]),
-                        drop_cultivar
-                    ],
-                    width = 3),
-                dbc.Col([
-                    html.Label(["Tree diameter"],),
-                    range_slider
-                    ],
-                    width = 3)
+                    id="header",
+                )
             ],
-        id = 'menu-bar')
-    ])],
-    id = 'nav-back'),
-    dbc.Container([
-        dbc.Row([dbc.Col([
-            html.Label(["Cherry blossom tree map"]),
-            html.Div(
-                style = {
-                    'height': '400px',
-                    'background-color':'lightgray'})
-        ],
-        width = 12,
-        id='row-map')]),
-        dbc.Row([
-            dbc.Col([
-                html.Label(["Tree cultivars (types)"]),
-                html.Iframe(
-                    id='bar')],
-                    width = 6,
-                    className = 'chart-box'),
-            dbc.Col([
-                html.Label(["Blooming timeline"]),
-                html.Iframe(
-                    id='timeline'
-                    )],
-                    width=6,
-                    className = 'chart-box'),
+            id="header-back",
+        ),
+        dbc.Container(
+            [
+                dbc.Container(
+                    [
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        html.Label(
+                                            ["Blossom date"],
+                                        ),
+                                        date_picker,
+                                    ],
+                                    width=3,
+                                ),
+                                dbc.Col(
+                                    [
+                                        html.Label(
+                                            ["Neighbourhood"],
+                                        ),
+                                        drop_hood,
+                                    ],
+                                    width=3,
+                                ),
+                                dbc.Col(
+                                    [
+                                        html.Label(["Tree cultivar (type)"]),
+                                        drop_cultivar,
+                                    ],
+                                    width=3,
+                                ),
+                                dbc.Col(
+                                    [
+                                        html.Label(
+                                            ["Tree diameter"],
+                                        ),
+                                        range_slider,
+                                    ],
+                                    width=3,
+                                ),
+                            ],
+                            id="menu-bar",
+                        )
+                    ]
+                )
+            ],
+            id="nav-back",
+        ),
+        dbc.Container(
+            [
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
+                                html.Label(["Cherry blossom tree map"]),
+                                dbc.Col(dcc.Graph(id="map")),
+                            ],
+                            width=12,
+                            id="row-map",
+                        )
+                    ]
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
+                                html.Label(["Tree cultivars (types)"]),
+                                html.Iframe(id="bar"),
+                            ],
+                            width=6,
+                            className="chart-box",
+                        ),
+                        dbc.Col(
+                            [
+                                html.Label(["Blooming timeline"]),
+                                html.Iframe(id="timeline"),
+                            ],
+                            width=6,
+                            className="chart-box",
+                        ),
                     ],
-                    className='row-chart'),
-        dbc.Row([
-            dbc.Col([
-                html.Label(["Tree diameters"]),
-                html.Iframe(
-                    id='diameter')],
-                    width = 6,
-                    className = 'chart-box'),
-            dbc.Col([
-                html.Label(["Tree density"]),
-                html.Iframe()],
-                    width=6,
-                    className = 'chart-box'),
-                ],
-            className='row-chart')
-            ])
-        ],
-    id = 'content'
+                    className="row-chart",
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
+                                html.Label(["Tree diameters"]),
+                                html.Iframe(id="diameter"),
+                            ],
+                            width=6,
+                            className="chart-box",
+                        ),
+                        dbc.Col(
+                            [
+                                html.Label(["Tree density"]),
+                                html.Iframe(
+                                    id="density",
+                                    style={
+                                        "height": "400px",
+                                        "width": "100%",
+                                        "border": "0",
+                                    },
+                                ),
+                            ],
+                            width=6,
+                            className="chart-box",
+                        ),
+                    ],
+                    className="row-chart",
+                ),
+            ]
+        ),
+    ],
+    id="content",
 )
 
 # C H A R T  F U N C T I O N S
+
+
+def street_map(df):
+    map_plot = px.scatter_mapbox(
+        df,
+        lat="lat",
+        lon="lon",
+        color_discrete_sequence=["fuchsia"],
+        zoom=10.8,
+        height=600,
+    )
+    map_plot.update_layout(mapbox_style="open-street-map")
+
+    return map_plot
+
+
+def density_map(df):
+    van_base = (
+        alt.Chart(data_geojson_remote)
+        .mark_geoshape(fill="lightgray")
+        .project(type="identity", reflectY=True)
+    )
+
+    plot_van = (
+        van_base
+        + alt.Chart(df)
+        .transform_lookup(
+            default="0",
+            as_="geo",
+            lookup="NEIGHBOURHOOD_NAME",
+            from_=alt.LookupData(data=data_geojson_remote, key="properties.name"),
+        )
+        .mark_geoshape()
+        .encode(
+            alt.Color(
+                "count()",
+                scale=alt.Scale(scheme="redpurple"),
+                legend=alt.Legend(orient="bottom"),
+            ),
+            alt.Shape(field="geo", type="geojson"),
+            tooltip=["count()", "NEIGHBOURHOOD_NAME:N"],
+        )
+    ).project(type="identity", reflectY=True)
+
+    return plot_van.to_html()
+
 
 def bar_plot(trees_bar):
     trees_bar = trees_bar.dropna(subset=["COMMON_NAME", "NEIGHBOURHOOD_NAME"])
@@ -222,6 +341,7 @@ def bar_plot(trees_bar):
     )
 
     return bar_plot.to_html()
+
 
 def timeline_plot(trees_timeline):
     trees_timeline = trees_timeline.dropna(subset=["BLOOM_START", "BLOOM_END"])
@@ -259,32 +379,40 @@ def timeline_plot(trees_timeline):
 
     return timeline.to_html()
 
+
 def diameter_plot(trees_df):
     trees_df = trees_df.dropna(subset=["DIAMETER"])
     trees_df["DIAMETER_CM"] = trees_df["DIAMETER"] * 2.54
-    diameter = alt.Chart(trees_df).transform_density(
-        'DIAMETER_CM',
-        as_=['DIAMETER', 'density']).mark_area(
-            interpolate='monotone', color='#F3B2D2',
+    diameter = (
+        alt.Chart(trees_df)
+        .transform_density("DIAMETER_CM", as_=["DIAMETER", "density"])
+        .mark_area(
+            interpolate="monotone",
+            color="#F3B2D2",
             opacity=0.4,
-            line=({'color':'#B665A4'})).encode(
-        alt.X('DIAMETER', title = 'Tree diameter (cm)', scale=alt.Scale(nice=False)),
-        alt.Y('density:Q', title="Density", axis=alt.Axis(labels=False))
+            line=({"color": "#B665A4"}),
+        )
+        .encode(
+            alt.X("DIAMETER", title="Tree diameter (cm)", scale=alt.Scale(nice=False)),
+            alt.Y("density:Q", title="Density", axis=alt.Axis(labels=False)),
+        )
     )
     return diameter.to_html()
+
 
 # Set up callbacks/backend
 @app.callback(
     Output("bar", "srcDoc"),
     Output("timeline", "srcDoc"),
     Output("diameter", "srcDoc"),
+    Output("density", "srcDoc"),
+    Output("map", "figure"),
     Input("picker_date", "start_date"),
     Input("picker_date", "end_date"),
     Input("filter_neighbourhood", "value"),
     Input("filter_cultivar", "value"),
-    Input("slider_diameter", "value")
+    Input("slider_diameter", "value"),
 )
-
 def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range):
     # Build new dataset and call all charts
 
@@ -330,8 +458,11 @@ def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range)
     bar = bar_plot(filtered_trees)
     timeline = timeline_plot(filtered_trees)
     diameter = diameter_plot(filtered_trees)
+    density = density_map(filtered_trees)
+    big_map = street_map(filtered_trees)
 
-    return bar, timeline, diameter
+    return bar, timeline, diameter, density, big_map
+
 
 @app.callback(
     Output("simple-toast", "is_open"),
@@ -342,5 +473,6 @@ def open_toast(n):
         return no_update
     return True
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run_server(debug=True)
