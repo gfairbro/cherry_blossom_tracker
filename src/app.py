@@ -279,11 +279,21 @@ def street_map(df):
         df,
         lat="lat",
         lon="lon",
-        color_discrete_sequence=["fuchsia"],
-        zoom=10.8,
+        color_discrete_sequence=["#B665A4"],
+        hover_data={
+            "COMMON_NAME": True,
+            "NEIGHBOURHOOD_NAME": True,
+            "DIAMETER": True,
+            "lat": False,
+            "lon": False,
+        },
+        zoom=10.9,
         height=600,
+        opacity=0.8,
     )
-    map_plot.update_layout(mapbox_style="open-street-map")
+    map_plot.update_layout(
+        mapbox_style="open-street-map", autosize=True, margin=dict(t=0, b=0, l=0, r=0)
+    )
 
     return map_plot
 
