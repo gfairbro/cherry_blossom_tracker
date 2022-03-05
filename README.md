@@ -15,7 +15,7 @@ The [Cherry blossom tracker app](https://yvrcherryblossomtracker.herokuapp.com/)
 
 ## Dashboard filters
 
-1. **Month dropdown.** *Cherry blossom tracker* allows users to filter by neighbourhood, tree cultivar and blossoming time. For example, if the user arrives in the spring, they can set the month to March or April to see which tree blossoms are currently in bloom. This change will appear on the map. When applied, this filter will display only those cultivars that are likely to blossom at this time.
+1. **Blossom date picker.** *Cherry blossom tracker* allows users to filter by neighbourhood, tree cultivar and blossoming time. For example, if the user arrives in the spring, they can set the month to March or April to see which tree blossoms are currently in bloom. This change will appear on the map. When applied, this filter will display only those cultivars that are likely to blossom at this time.
 
 2. **Neighbourhood dropdown.** Users can select the desired neighbourhoods from a dropdown list. This selection will zoom the map to the desired neighbourhood and also filter the cultivars, locations, cherry images and blossoming times according to the neighbourhood.
 
