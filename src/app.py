@@ -21,11 +21,12 @@ data_geojson_remote = alt.Data(
 )
 
 # Setup app and layout/frontend
-app = Dash(__name__,
+app = Dash(
+    __name__,
     external_stylesheets=[
         "https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap",
         dbc.themes.BOOTSTRAP,
-    ]
+    ],
 )
 
 server = app.server
@@ -74,14 +75,14 @@ drop_hood = dcc.Dropdown(
             "value": "all_neighbourhoods",
         }
     ]
-    + [{"label": i, "value": i} for i in raw_trees.NEIGHBOURHOOD_NAME.unique()],
+    + [{"label": i, "value": i} for i in sorted(raw_trees.NEIGHBOURHOOD_NAME.unique())],
 )
 
 drop_cultivar = dcc.Dropdown(
     id="filter_cultivar",
     value="all_cultivars",
     options=[{"label": "All cultivars", "value": "all_cultivars"}]
-    + [{"label": i, "value": i} for i in raw_trees.CULTIVAR_NAME.unique()],
+    + [{"label": i, "value": i} for i in sorted(raw_trees.CULTIVAR_NAME.unique())],
 )
 
 # Range sliders
@@ -90,7 +91,7 @@ range_slider = dcc.RangeSlider(
     min=0,
     max=150,
     value=[0, 100],
-    marks={0: "0cm", 100: "100cm"},
+    marks={0: "0cm", 150: "150cm"},
     tooltip={"placement": "bottom", "always_visible": True},
 )
 
@@ -209,7 +210,15 @@ app.layout = dbc.Container(
                         dbc.Col(
                             [
                                 html.Label(["Cherry blossom tree map"]),
-                                dbc.Col(dcc.Graph(id="map")),
+                                dbc.Col(
+                                    [
+                                        dcc.Loading(
+                                            id="loading-1",
+                                            type="default",
+                                            children=dcc.Graph(id="map"),
+                                        ),
+                                    ]
+                                ),
                             ],
                             width=12,
                             id="row-map",
@@ -221,7 +230,11 @@ app.layout = dbc.Container(
                         dbc.Col(
                             [
                                 html.Label(["Tree cultivars (types)"]),
-                                html.Iframe(id="bar"),
+                                dcc.Loading(
+                                    id="loading-2",
+                                    type="default",
+                                    children=html.Iframe(id="bar"),
+                                ),
                             ],
                             width=6,
                             className="chart-box",
@@ -229,7 +242,11 @@ app.layout = dbc.Container(
                         dbc.Col(
                             [
                                 html.Label(["Blooming timeline"]),
-                                html.Iframe(id="timeline"),
+                                dcc.Loading(
+                                    id="loading-3",
+                                    type="default",
+                                    children=html.Iframe(id="timeline"),
+                                ),
                             ],
                             width=6,
                             className="chart-box",
@@ -242,7 +259,11 @@ app.layout = dbc.Container(
                         dbc.Col(
                             [
                                 html.Label(["Tree diameters"]),
-                                html.Iframe(id="diameter"),
+                                dcc.Loading(
+                                    id="loading-4",
+                                    type="default",
+                                    children=html.Iframe(id="diameter"),
+                                ),
                             ],
                             width=6,
                             className="chart-box",
@@ -250,13 +271,17 @@ app.layout = dbc.Container(
                         dbc.Col(
                             [
                                 html.Label(["Tree density"]),
-                                html.Iframe(
-                                    id="density",
-                                    style={
-                                        "height": "400px",
-                                        "width": "100%",
-                                        "border": "0",
-                                    },
+                                dcc.Loading(
+                                    id="loading-5",
+                                    type="default",
+                                    children=html.Iframe(
+                                        id="density",
+                                        style={
+                                            "height": "400px",
+                                            "width": "100%",
+                                            "border": "0",
+                                        },
+                                    ),
                                 ),
                             ],
                             width=6,
@@ -280,10 +305,24 @@ def street_map(df):
         lat="lat",
         lon="lon",
         color_discrete_sequence=["#B665A4"],
-        zoom=10.8,
+        hover_data={
+            "COMMON_NAME": True,
+            "NEIGHBOURHOOD_NAME": True,
+            "DIAMETER": True,
+            "lat": False,
+            "lon": False,
+            "TREE_ID": True,
+        },
+        zoom=10.9,
         height=600,
+        opacity=0.8,
     )
-    map_plot.update_layout(mapbox_style="open-street-map")
+    map_plot.update_layout(
+        mapbox_style="open-street-map", autosize=True, margin=dict(t=0, b=0, l=0, r=0)
+    )
+
+    map_plot.update_xaxes(visible=False)
+    map_plot.update_yaxes(visible=False)
 
     return map_plot
 
@@ -365,7 +404,7 @@ def timeline_plot(trees_timeline):
                 title=None,
             ),
             x2="BLOOM_END",
-            y=alt.Y("CULTIVAR_NAME:N", title=None),
+            y=alt.Y("CULTIVAR_NAME:N", title=None, sort="x"),
             tooltip=[
                 alt.Tooltip("BLOOM_START", title="Start"),
                 alt.Tooltip("BLOOM_END", title="End"),
@@ -411,8 +450,11 @@ def diameter_plot(trees_df):
     Input("filter_neighbourhood", "value"),
     Input("filter_cultivar", "value"),
     Input("slider_diameter", "value"),
+    Input("map", "selectedData"),
 )
-def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range):
+def main_callback(
+    start_date, end_date, neighbourhood, cultivar, diameter_range, selectedData
+):
     # Build new dataset and call all charts
 
     # Date input Cleanup
@@ -424,6 +466,17 @@ def main_callback(start_date, end_date, neighbourhood, cultivar, diameter_range)
     end_date = pd.Timestamp(date.fromisoformat(end_date))
 
     filtered_trees = raw_trees
+
+    # Filter by selection from big map
+    if selectedData is not None:
+        selectedTrees = []
+        if "points" in selectedData:
+            if selectedData["points"] is not None:
+                for point in selectedData["points"]:
+                    # print(point)
+                    selectedTrees.append(point["customdata"][-1])
+                # print(selectedTrees)
+        filtered_trees = filtered_trees[filtered_trees["TREE_ID"].isin(selectedTrees)]
 
     # Filter by neighbourhood
     if neighbourhood != "all_neighbourhoods":
