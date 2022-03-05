@@ -375,7 +375,6 @@ def bar_plot(trees_bar):
         )
         .transform_aggregate(count="count()", groupby=["CULTIVAR_NAME"])
         .configure_mark(opacity=0.6, color="#F3B2D2")
-        .interactive()
     )
 
     return bar_plot.to_html()
