@@ -1,4 +1,4 @@
-** Reflection **
+# Reflection 
 
 Overall our group is VERY happy with how our dashboard turned out. Everyone put in a lot of work, and the vision and functionality were focused and well-defined. We managed to include several
 optional features including the full map and several other small functionalities. We arent aware or any bugs or features under development. 
