@@ -96,7 +96,7 @@ range_slider = dcc.RangeSlider(
 )
 
 # L A Y O U T
-app.title = "Vancouver Cherry Blossom Festival"
+app.title = "Vancouver Cherry Blossom Tracker"
 app.layout = dbc.Container(
     [
         dbc.Toast(
