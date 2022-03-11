@@ -2,7 +2,7 @@
 
 ![Dashboard-GIF](https://github.com/UBC-MDS/cherry_blossom_tracker/blob/main/docs/screen-capture.gif?raw=true)
 
-Are you curious about the locations of 🌸 cherry blossoms in Vancouver? How many different cherry cultivars are there? Which neighbourhood contains the most cherry blossoms? 🤔 It can be tricky to find the answers to these questions by yourself. To solve this problem, we combine various data sources together, and vizualize them on a dashboard for easy consumption. 
+Are you curious about the locations of 🌸 cherry blossoms in Vancouver? How many different cherry cultivars are there? Which neighbourhood contains the most cherry blossoms? 🤔 It can be tricky to find the answers to these questions by yourself. To solve this problem, we combine various data sources together, and vizualize them on a dashboard for easy consumption.
 
 The [Cherry blossom tracker app](https://yvrcherryblossomtracker.herokuapp.com/) consists of maps and plots that help users locate cherry blossoms in Vancouver depending on the month, neighbourhood, tree size and cultivar. The maps display tree locations using geographic coordinates as well as tree density using a neighbourhood heat map. The plot contains a gantt chart with the blossoming timeline, cultivar bar chart, tree circumference distributions as well as a section with blossom photo examples.
 
@@ -22,6 +22,15 @@ The [Cherry blossom tracker app](https://yvrcherryblossomtracker.herokuapp.com/)
 3. **Cultivar dropdown.** Different tree cultivars produce different flowers and colours. Users are able to search for information regarding specific cultivars. Their location, count and blossom time will be updated according to the selected cultivar.
 
 4. **Tree circumference range filter.** Tree circumference is a proxy for the size of the tree and its canopy. Dashboard visitors may look specifically for larger and older trees. They can adjust the tree circumference using a slider.
+
+## Run dashboard locally
+
+You can run this app locally using Docker. After cloning the repo, navigate to the repo directory, open Docker Desktop and run the following
+command:
+
+```bash
+docker-compose up
+```
 
 ## App sketch
 
