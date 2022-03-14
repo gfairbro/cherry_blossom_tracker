@@ -348,7 +348,7 @@ def density_map(df):
             alt.Color(
                 "count()",
                 scale=alt.Scale(scheme="redpurple"),
-                legend=alt.Legend(orient="bottom"),
+                legend=alt.Legend(orient="bottom", title="Number of Trees"),
             ),
             alt.Shape(field="geo", type="geojson"),
             tooltip=["count()", "NEIGHBOURHOOD_NAME:N"],
