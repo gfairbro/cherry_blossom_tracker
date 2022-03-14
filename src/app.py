@@ -96,7 +96,7 @@ range_slider = dcc.RangeSlider(
 )
 
 # L A Y O U T
-app.title = "Vancouver Cherry Blossom Festival"
+app.title = "Vancouver Cherry Blossom Tracker"
 app.layout = dbc.Container(
     [
         dbc.Toast(
@@ -348,7 +348,7 @@ def density_map(df):
             alt.Color(
                 "count()",
                 scale=alt.Scale(scheme="redpurple"),
-                legend=alt.Legend(orient="bottom"),
+                legend=alt.Legend(orient="bottom", title="Number of Trees"),
             ),
             alt.Shape(field="geo", type="geojson"),
             tooltip=["count()", "NEIGHBOURHOOD_NAME:N"],
