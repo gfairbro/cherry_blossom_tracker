@@ -73,6 +73,8 @@ drop_hood = dcc.Dropdown(
     options=[
         {"label": i, "value": i} for i in sorted(raw_trees.NEIGHBOURHOOD_NAME.unique())
     ],
+    clearable=True,
+    searchable=True,
     multi=True
 )
 
@@ -82,6 +84,8 @@ drop_cultivar = dcc.Dropdown(
     options=[
         {"label": i, "value": i} for i in sorted(raw_trees.CULTIVAR_NAME.unique())
     ],
+    clearable=True,
+    searchable=True,
     multi=True
 )
 
