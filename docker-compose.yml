@@ -1,0 +1,9 @@
+# docker-compose.yml
+version: '3'
+services:
+  # main application
+  myapp:
+    container_name: cherry_blossom_tracker
+    build: .
+    ports:
+      - "8000:8000"
