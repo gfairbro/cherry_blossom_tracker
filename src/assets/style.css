@@ -30,6 +30,7 @@ body {
 .DateInput_input {
     font-size: 15px;
     color:black;
+    height: 35px;
 }
 
 .DateRangePickerInput_arrow_svg {
@@ -38,6 +39,7 @@ body {
 
 .DateInput {
     width: 100px;
+    height: 35px;
 }
 
 #content {
