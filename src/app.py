@@ -65,6 +65,7 @@ date_picker = dcc.DatePickerRange(
     max_date_allowed=date(2022, 5, 30),
     start_date_placeholder_text="Start date",
     end_date_placeholder_text="End date",
+    clearable=True
 )
 
 drop_hood = dcc.Dropdown(
