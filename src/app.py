@@ -69,21 +69,20 @@ date_picker = dcc.DatePickerRange(
 
 drop_hood = dcc.Dropdown(
     id="filter_neighbourhood",
-    value="all_neighbourhoods",
+    placeholder="Select neighbourhoods",
     options=[
-        {
-            "label": "All neighbourhoods",
-            "value": "all_neighbourhoods",
-        }
-    ]
-    + [{"label": i, "value": i} for i in sorted(raw_trees.NEIGHBOURHOOD_NAME.unique())],
+        {"label": i, "value": i} for i in sorted(raw_trees.NEIGHBOURHOOD_NAME.unique())
+    ],
+    multi=True
 )
 
 drop_cultivar = dcc.Dropdown(
     id="filter_cultivar",
-    value="all_cultivars",
-    options=[{"label": "All cultivars", "value": "all_cultivars"}]
-    + [{"label": i, "value": i} for i in sorted(raw_trees.CULTIVAR_NAME.unique())],
+    placeholder="Select cultivars",
+    options=[
+        {"label": i, "value": i} for i in sorted(raw_trees.CULTIVAR_NAME.unique())
+    ],
+    multi=True
 )
 
 # Range sliders
@@ -215,8 +214,9 @@ app.layout = dbc.Container(
                                     [
                                         dcc.Loading(
                                             id="loading-1",
-                                            type="default",
+                                            type="circle",
                                             children=dcc.Graph(id="map"),
+                                            color="#B665A4"
                                         ),
                                     ]
                                 ),
@@ -233,8 +233,9 @@ app.layout = dbc.Container(
                                 html.Label(["Tree cultivars (types)"]),
                                 dcc.Loading(
                                     id="loading-2",
-                                    type="default",
+                                    type="circle",
                                     children=html.Iframe(id="bar"),
+                                    color="#B665A4"
                                 ),
                             ],
                             width=6,
@@ -245,8 +246,9 @@ app.layout = dbc.Container(
                                 html.Label(["Blooming timeline"]),
                                 dcc.Loading(
                                     id="loading-3",
-                                    type="default",
+                                    type="circle",
                                     children=html.Iframe(id="timeline"),
+                                    color="#B665A4"
                                 ),
                             ],
                             width=6,
@@ -262,8 +264,9 @@ app.layout = dbc.Container(
                                 html.Label(["Tree diameters"]),
                                 dcc.Loading(
                                     id="loading-4",
-                                    type="default",
+                                    type="circle",
                                     children=html.Iframe(id="diameter"),
+                                    color="#B665A4"
                                 ),
                             ],
                             width=6,
@@ -274,7 +277,7 @@ app.layout = dbc.Container(
                                 html.Label(["Tree density"]),
                                 dcc.Loading(
                                     id="loading-5",
-                                    type="default",
+                                    type="circle",
                                     children=html.Iframe(
                                         id="density",
                                         style={
@@ -283,6 +286,7 @@ app.layout = dbc.Container(
                                             "border": "0",
                                         },
                                     ),
+                                    color="#B665A4"
                                 ),
                             ],
                             width=6,
@@ -479,9 +483,9 @@ def main_callback(
         filtered_trees = filtered_trees[filtered_trees["TREE_ID"].isin(selectedTrees)]
 
     # Filter by neighbourhood
-    if neighbourhood != "all_neighbourhoods":
+    if neighbourhood:
         filtered_trees = filtered_trees[
-            filtered_trees["NEIGHBOURHOOD_NAME"] == neighbourhood
+            filtered_trees["NEIGHBOURHOOD_NAME"].isin(neighbourhood)
         ]
 
     # Filter by date
@@ -504,8 +508,8 @@ def main_callback(
         filtered_trees["DIAMETER"].between(diameter_range[0], diameter_range[1])
     ]
 
-    if cultivar != "all_cultivars":
-        filtered_trees = filtered_trees[filtered_trees["CULTIVAR_NAME"] == cultivar]
+    if cultivar:
+        filtered_trees = filtered_trees[filtered_trees["CULTIVAR_NAME"].isin(cultivar)]
 
     bar = bar_plot(filtered_trees)
     timeline = timeline_plot(filtered_trees)
