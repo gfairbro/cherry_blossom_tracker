@@ -215,8 +215,9 @@ app.layout = dbc.Container(
                                     [
                                         dcc.Loading(
                                             id="loading-1",
-                                            type="default",
+                                            type="circle",
                                             children=dcc.Graph(id="map"),
+                                            color="#B665A4"
                                         ),
                                     ]
                                 ),
@@ -233,8 +234,9 @@ app.layout = dbc.Container(
                                 html.Label(["Tree cultivars (types)"]),
                                 dcc.Loading(
                                     id="loading-2",
-                                    type="default",
+                                    type="circle",
                                     children=html.Iframe(id="bar"),
+                                    color="#B665A4"
                                 ),
                             ],
                             width=6,
@@ -245,8 +247,9 @@ app.layout = dbc.Container(
                                 html.Label(["Blooming timeline"]),
                                 dcc.Loading(
                                     id="loading-3",
-                                    type="default",
+                                    type="circle",
                                     children=html.Iframe(id="timeline"),
+                                    color="#B665A4"
                                 ),
                             ],
                             width=6,
@@ -262,8 +265,9 @@ app.layout = dbc.Container(
                                 html.Label(["Tree diameters"]),
                                 dcc.Loading(
                                     id="loading-4",
-                                    type="default",
+                                    type="circle",
                                     children=html.Iframe(id="diameter"),
+                                    color="#B665A4"
                                 ),
                             ],
                             width=6,
@@ -274,7 +278,7 @@ app.layout = dbc.Container(
                                 html.Label(["Tree density"]),
                                 dcc.Loading(
                                     id="loading-5",
-                                    type="default",
+                                    type="circle",
                                     children=html.Iframe(
                                         id="density",
                                         style={
@@ -283,6 +287,7 @@ app.layout = dbc.Container(
                                             "border": "0",
                                         },
                                     ),
+                                    color="#B665A4"
                                 ),
                             ],
                             width=6,
