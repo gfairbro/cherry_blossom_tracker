@@ -65,7 +65,7 @@ date_picker = dcc.DatePickerRange(
     max_date_allowed=date(2022, 5, 30),
     start_date_placeholder_text="Start date",
     end_date_placeholder_text="End date",
-    clearable=True
+    clearable=True,
 )
 
 drop_hood = dcc.Dropdown(
@@ -76,7 +76,7 @@ drop_hood = dcc.Dropdown(
     ],
     clearable=True,
     searchable=True,
-    multi=True
+    multi=True,
 )
 
 drop_cultivar = dcc.Dropdown(
@@ -87,7 +87,7 @@ drop_cultivar = dcc.Dropdown(
     ],
     clearable=True,
     searchable=True,
-    multi=True
+    multi=True,
 )
 
 # Range sliders
@@ -317,14 +317,6 @@ def street_map(df):
         lat="lat",
         lon="lon",
         color_discrete_sequence=["#B665A4"],
-        hover_data={
-            "COMMON_NAME": True,
-            "NEIGHBOURHOOD_NAME": True,
-            "DIAMETER": True,
-            "lat": False,
-            "lon": False,
-            "TREE_ID": True,
-        },
         custom_data=[df.COMMON_NAME, df.NEIGHBOURHOOD_NAME, df.DIAMETER, df.TREE_ID],
         zoom=10.9,
         height=600,
