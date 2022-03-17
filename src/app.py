@@ -27,7 +27,7 @@ app = Dash(
         "https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap",
         dbc.themes.BOOTSTRAP,
     ],
-    compress=True
+    compress=True,
 )
 
 server = app.server
@@ -73,7 +73,7 @@ drop_hood = dcc.Dropdown(
     options=[
         {"label": i, "value": i} for i in sorted(raw_trees.NEIGHBOURHOOD_NAME.unique())
     ],
-    multi=True
+    multi=True,
 )
 
 drop_cultivar = dcc.Dropdown(
@@ -82,7 +82,7 @@ drop_cultivar = dcc.Dropdown(
     options=[
         {"label": i, "value": i} for i in sorted(raw_trees.CULTIVAR_NAME.unique())
     ],
-    multi=True
+    multi=True,
 )
 
 # Range sliders
@@ -216,7 +216,7 @@ app.layout = dbc.Container(
                                             id="loading-1",
                                             type="circle",
                                             children=dcc.Graph(id="map"),
-                                            color="#B665A4"
+                                            color="#B665A4",
                                         ),
                                     ]
                                 ),
@@ -235,7 +235,7 @@ app.layout = dbc.Container(
                                     id="loading-2",
                                     type="circle",
                                     children=html.Iframe(id="bar"),
-                                    color="#B665A4"
+                                    color="#B665A4",
                                 ),
                             ],
                             width=6,
@@ -248,7 +248,7 @@ app.layout = dbc.Container(
                                     id="loading-3",
                                     type="circle",
                                     children=html.Iframe(id="timeline"),
-                                    color="#B665A4"
+                                    color="#B665A4",
                                 ),
                             ],
                             width=6,
@@ -266,7 +266,7 @@ app.layout = dbc.Container(
                                     id="loading-4",
                                     type="circle",
                                     children=html.Iframe(id="diameter"),
-                                    color="#B665A4"
+                                    color="#B665A4",
                                 ),
                             ],
                             width=6,
@@ -286,7 +286,7 @@ app.layout = dbc.Container(
                                             "border": "0",
                                         },
                                     ),
-                                    color="#B665A4"
+                                    color="#B665A4",
                                 ),
                             ],
                             width=6,
@@ -329,10 +329,17 @@ def street_map(df):
     map_plot.update_xaxes(visible=False)
     map_plot.update_yaxes(visible=False)
 
+    map_plot.update_traces(
+        customdata=[df.COMMON_NAME, df.NEIGHBOURHOOD_NAME, df.DIAMETER, df.TREE_ID]
+    )
+    map_plot.update_traces(hovertemplate="Name: %{customdata[0]}<extra></extra>")
+
     return map_plot
 
 
 def density_map(df):
+    df["DIAMETER_CM"] = df["DIAMETER"] * 2.54
+
     van_base = (
         alt.Chart(data_geojson_remote)
         .mark_geoshape(fill="lightgray")
@@ -356,7 +363,16 @@ def density_map(df):
                 legend=alt.Legend(orient="bottom", title="Number of Trees"),
             ),
             alt.Shape(field="geo", type="geojson"),
-            tooltip=["count()", "NEIGHBOURHOOD_NAME:N"],
+            tooltip=[
+                alt.Tooltip("NEIGHBOURHOOD_NAME:N", title="Neighbourhood"),
+                alt.Tooltip("count()", title="No. of trees"),
+                alt.Tooltip(
+                    "DIAMETER_CM:Q",
+                    title="Mean tree diameter (cm)",
+                    aggregate="mean",
+                    format=".2f cm",
+                ),
+            ],
         )
     ).project(type="identity", reflectY=True)
 
