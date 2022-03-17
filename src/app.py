@@ -27,7 +27,7 @@ app = Dash(
         "https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap",
         dbc.themes.BOOTSTRAP,
     ],
-    compress=True
+    compress=True,
 )
 
 server = app.server
@@ -221,7 +221,7 @@ app.layout = dbc.Container(
                                             id="loading-1",
                                             type="circle",
                                             children=dcc.Graph(id="map"),
-                                            color="#B665A4"
+                                            color="#B665A4",
                                         ),
                                     ]
                                 ),
@@ -240,7 +240,7 @@ app.layout = dbc.Container(
                                     id="loading-2",
                                     type="circle",
                                     children=html.Iframe(id="bar"),
-                                    color="#B665A4"
+                                    color="#B665A4",
                                 ),
                             ],
                             width=6,
@@ -253,7 +253,7 @@ app.layout = dbc.Container(
                                     id="loading-3",
                                     type="circle",
                                     children=html.Iframe(id="timeline"),
-                                    color="#B665A4"
+                                    color="#B665A4",
                                 ),
                             ],
                             width=6,
@@ -271,7 +271,7 @@ app.layout = dbc.Container(
                                     id="loading-4",
                                     type="circle",
                                     children=html.Iframe(id="diameter"),
-                                    color="#B665A4"
+                                    color="#B665A4",
                                 ),
                             ],
                             width=6,
@@ -291,7 +291,7 @@ app.layout = dbc.Container(
                                             "border": "0",
                                         },
                                     ),
-                                    color="#B665A4"
+                                    color="#B665A4",
                                 ),
                             ],
                             width=6,
@@ -310,6 +310,8 @@ app.layout = dbc.Container(
 
 
 def street_map(df):
+    df["DIAMETER_CM"] = df["DIAMETER"] * 2.54
+
     map_plot = px.scatter_mapbox(
         df,
         lat="lat",
@@ -323,6 +325,7 @@ def street_map(df):
             "lon": False,
             "TREE_ID": True,
         },
+        custom_data=[df.COMMON_NAME, df.NEIGHBOURHOOD_NAME, df.DIAMETER, df.TREE_ID],
         zoom=10.9,
         height=600,
         opacity=0.8,
@@ -334,10 +337,16 @@ def street_map(df):
     map_plot.update_xaxes(visible=False)
     map_plot.update_yaxes(visible=False)
 
+    map_plot.update_traces(
+        hovertemplate="Type: %{customdata[0]}<br>Neighbourhood: %{customdata[1]}<br>Diameter(cm): %{customdata[2]:.2f}<br>Tree ID: %{customdata[3]}"
+    )
+
     return map_plot
 
 
 def density_map(df):
+    df["DIAMETER_CM"] = df["DIAMETER"] * 2.54
+
     van_base = (
         alt.Chart(data_geojson_remote)
         .mark_geoshape(fill="lightgray")
@@ -361,7 +370,16 @@ def density_map(df):
                 legend=alt.Legend(orient="bottom", title="Number of Trees"),
             ),
             alt.Shape(field="geo", type="geojson"),
-            tooltip=["count()", "NEIGHBOURHOOD_NAME:N"],
+            tooltip=[
+                alt.Tooltip("NEIGHBOURHOOD_NAME:N", title="Neighbourhood"),
+                alt.Tooltip("count()", title="No. of trees"),
+                alt.Tooltip(
+                    "DIAMETER_CM:Q",
+                    title="Mean tree diameter (cm)",
+                    aggregate="mean",
+                    format=".2f",
+                ),
+            ],
         )
     ).project(type="identity", reflectY=True)
 
