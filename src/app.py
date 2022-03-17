@@ -65,6 +65,7 @@ date_picker = dcc.DatePickerRange(
     max_date_allowed=date(2022, 5, 30),
     start_date_placeholder_text="Start date",
     end_date_placeholder_text="End date",
+    clearable=True
 )
 
 drop_hood = dcc.Dropdown(
@@ -73,6 +74,8 @@ drop_hood = dcc.Dropdown(
     options=[
         {"label": i, "value": i} for i in sorted(raw_trees.NEIGHBOURHOOD_NAME.unique())
     ],
+    clearable=True,
+    searchable=True,
     multi=True
 )
 
@@ -82,6 +85,8 @@ drop_cultivar = dcc.Dropdown(
     options=[
         {"label": i, "value": i} for i in sorted(raw_trees.CULTIVAR_NAME.unique())
     ],
+    clearable=True,
+    searchable=True,
     multi=True
 )
 
