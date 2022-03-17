@@ -305,6 +305,8 @@ app.layout = dbc.Container(
 
 
 def street_map(df):
+    df["DIAMETER_CM"] = df["DIAMETER"] * 2.54
+
     map_plot = px.scatter_mapbox(
         df,
         lat="lat",
@@ -318,6 +320,7 @@ def street_map(df):
             "lon": False,
             "TREE_ID": True,
         },
+        custom_data=[df.COMMON_NAME, df.NEIGHBOURHOOD_NAME, df.DIAMETER, df.TREE_ID],
         zoom=10.9,
         height=600,
         opacity=0.8,
@@ -330,9 +333,8 @@ def street_map(df):
     map_plot.update_yaxes(visible=False)
 
     map_plot.update_traces(
-        customdata=[df.COMMON_NAME, df.NEIGHBOURHOOD_NAME, df.DIAMETER, df.TREE_ID]
+        hovertemplate="Type: %{customdata[0]}<br>Neighbourhood: %{customdata[1]}<br>Diameter(cm): %{customdata[2]:.2f}<br>Tree ID: %{customdata[3]}"
     )
-    map_plot.update_traces(hovertemplate="Name: %{customdata[0]}<extra></extra>")
 
     return map_plot
 
@@ -370,7 +372,7 @@ def density_map(df):
                     "DIAMETER_CM:Q",
                     title="Mean tree diameter (cm)",
                     aggregate="mean",
-                    format=".2f cm",
+                    format=".2f",
                 ),
             ],
         )
