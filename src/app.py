@@ -449,6 +449,8 @@ def diameter_plot(trees_df):
     trees_df = trees_df.dropna(subset=["DIAMETER"])
     trees_df["DIAMETER_CM"] = trees_df["DIAMETER"] * 2.54
     trees_df = trees_df.loc[(trees_df['DIAMETER_CM'] >= 0) & (trees_df["DIAMETER_CM"] <= 150)]
+    # trees_df["MEAN_DIAM"] = trees_df['DIAMETER_CM'].mean()
+
 
     diameter = (
         alt.Chart(trees_df)
@@ -462,7 +464,7 @@ def diameter_plot(trees_df):
         .encode(
             alt.X("DIAMETER", title="Tree diameter (cm)", scale=alt.Scale(
                 domain=(0, 160))),
-            alt.Y("density:Q", title="Density", axis=alt.Axis(labels=False)),
+            alt.Y("density:Q", title="Density", axis=alt.Axis(labels=False))
         )
     )
     return diameter.to_html()
