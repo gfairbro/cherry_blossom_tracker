@@ -1,6 +1,7 @@
 # 🌸 Vancouver Cherry blossom tracker
 
 ![Dashboard-GIF](https://github.com/UBC-MDS/cherry_blossom_tracker/blob/main/data/screen-capture.gif?raw=true)
+
 📊 [Dashboard Link](https://yvrcherryblossomtracker.herokuapp.com/)
 
 Are you curious about the locations of 🌸 cherry blossoms in Vancouver? How many different cherry cultivars are there? Which neighbourhood contains the most cherry blossoms? 🤔 It can be tricky to find the answers to these questions by yourself. To solve this problem, we combine various data sources together, and vizualize them on a dashboard for easy consumption.
