@@ -448,6 +448,8 @@ def timeline_plot(trees_timeline):
 def diameter_plot(trees_df):
     trees_df = trees_df.dropna(subset=["DIAMETER"])
     trees_df["DIAMETER_CM"] = trees_df["DIAMETER"] * 2.54
+    trees_df = trees_df.loc[(trees_df['DIAMETER_CM'] >= 0) & (trees_df["DIAMETER_CM"] <= 150)]
+
     diameter = (
         alt.Chart(trees_df)
         .transform_density("DIAMETER_CM", as_=["DIAMETER", "density"])
@@ -458,7 +460,8 @@ def diameter_plot(trees_df):
             line=({"color": "#B665A4"}),
         )
         .encode(
-            alt.X("DIAMETER", title="Tree diameter (cm)", scale=alt.Scale(nice=False)),
+            alt.X("DIAMETER", title="Tree diameter (cm)", scale=alt.Scale(
+                domain=(0, 160))),
             alt.Y("density:Q", title="Density", axis=alt.Axis(labels=False)),
         )
     )
