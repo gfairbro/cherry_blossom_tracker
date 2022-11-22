@@ -14,7 +14,6 @@ The [Cherry blossom tracker app](https://yvrcherryblossomtracker.herokuapp.com/)
 * 🌸 [Cherry Cultivars list](https://www.vcbf.ca/education/cherry-cultivars)
 * 🌳 [City of Vancouver - Street trees dataset](https://opendata.vancouver.ca/explore/dataset/street-trees/information/?disjunctive.species_name&disjunctive.common_name&disjunctive.height_range_id&disjunctive.on_street&disjunctive.neighbourhood_name)
 * 📄 Proposal document can be found [here](https://github.com/UBC-MDS/cherry_blossom_tracker/blob/main/docs/proposal.md)
-* Check out our R implementation [here](https://github.com/UBC-MDS/cherry_blossom_tracker_R)
 
 ## Dashboard Features
 
@@ -61,4 +60,4 @@ For this project, we used `Dash` for dashboarding, `Altair` and `Plotly` for cha
 
 ## License
 
-`cherry_blossom_tracker` was created by Katia Aristova, Gabriel Fairbrother, Chaoran Wang, Ting Zhe (TZ) Yan. It is licensed under the terms of the GNU General Public License v3.0 license.
+`cherry_blossom_tracker` was created by Katia Aristova, Gabriel Fairbrother, Chaoran Wang, TZ Yan. It is licensed under the terms of the GNU General Public License v3.0 license.
