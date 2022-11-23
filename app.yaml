@@ -1,3 +1,5 @@
 runtime: python39
 
-entrypoint: gunicorn -t 1000 -b :$PORT src.app:server
+entrypoint: gunicorn -t 0 -b :$PORT src.app:server
+
+instance_class: F4_1G
