@@ -1,6 +1,6 @@
 gunicorn
 altair
 pandas
-dash
+dash==2.4
 dash_bootstrap_components
-plotly
+plotly==5.6
