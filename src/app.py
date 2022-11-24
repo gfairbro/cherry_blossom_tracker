@@ -467,7 +467,7 @@ def diameter_plot(trees_df):
     Output("timeline", "srcDoc"),
     Output("diameter", "srcDoc"),
     Output("density", "srcDoc"),
-    Output("map", "figure"),
+    Output("big_map", "figure"),
     Input("picker_date", "start_date"),
     Input("picker_date", "end_date"),
     Input("filter_neighbourhood", "value"),
